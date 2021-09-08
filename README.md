@@ -1,2 +1,8 @@
 # api-signer
-JS library for signing queries to manage assets
+JS Library for creating and managing Living Assets
+
+# Running Tests
+```
+npm ci
+npm test
+```
