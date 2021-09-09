@@ -57,8 +57,100 @@ function signListImages({ web3account, universeIdx }) {
   return digestSignature;
 }
 
+/*
+ * HELPER FUNCTIONS
+ */
+
+// Converts a JSON object to a string, cleans spaces and escapes required characters
+function jsonToCleanString(inputJSON) {
+  let jsonString = JSON.stringify(inputJSON);
+  jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, '\\"');
+  return jsonString;
+}
+
+// Cleans ops string ready for GQL
+function cleanOpsStringForGQL(opsString) {
+  return opsString.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+// Returns the two main strings (ops and signature)
+// to be used as inputs to Create Asset GraphQL mutation
+function createAssetMutationInputs(
+  {
+    universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
+  },
+) {
+  // insert escape characters into metadata and props strings. This is necessary
+  // for correct parsing of the properties and metadata
+  const propsOps = jsonToCleanString(propsJSON);
+  const metadataOps = jsonToCleanString(metadataJSON);
+
+  /** *
+    * CREATING THE OPERATIONS STRING
+    * This is the string that will be signed by the universe owner,
+    * and registered with the underlying blockchain
+    * `{
+    *   "type":"create_asset",
+    *   "msg":{
+    *       "nonce":<userNonce>,
+    *       "owner_id": "<newAssetOwnerId>",
+    *       "props":"<assetProperties>",
+    *       "metadata": "<assetMetadata>"
+    *   }
+    * }`
+    */
+  const opsString = `{"type":"create_asset","msg":{"nonce":${userNonce},"owner_id":"${newAssetOwnerId}","props":"${propsOps}","metadata":"${metadataOps}"}}`;
+
+  // sign the operations string using the Web3 universe owner account
+  const sig = signExecuteMutation({
+    web3account: universeOwnerAccount,
+    universeIdx,
+    opsStr: opsString,
+  });
+
+  // remove the initial "0x" from the signature
+  const sigString = sig.signature.substring(2);
+
+  // add more escape characters to embed the ops string into the query
+  // this is necessary for correct graphQL parsing
+  const gqlOpsString = cleanOpsStringForGQL(opsString);
+  return {
+    ops: gqlOpsString,
+    signature: sigString,
+  };
+}
+
+// returns a human-readable string that can be used as GraphQL mutation
+function createAssetMutation(
+  {
+    universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
+  },
+) {
+  const { ops, signature } = createAssetMutationInputs({
+    universeOwnerAccount,
+    newAssetOwnerId,
+    userNonce,
+    universeIdx,
+    propsJSON,
+    metadataJSON,
+  });
+  return `
+    mutation {
+        execute(
+            input: {
+              ops: ["${ops}"],
+              signature: "${signature}",
+              universe: ${universeIdx},
+            }){
+              results
+            }}
+    `;
+}
+
 module.exports = {
   signExecuteMutation,
   signImageUpload,
   signListImages,
+  createAssetMutationInputs,
+  createAssetMutation,
 };

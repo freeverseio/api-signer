@@ -4,6 +4,8 @@ const {
   signExecuteMutation,
   signImageUpload,
   signListImages,
+  createAssetMutationInputs,
+  createAssetMutation,
 } = require('../src/ApiSigner');
 
 it('signExecuteMutation - opsStr = empty', () => {
@@ -77,4 +79,73 @@ it('signListImages', () => {
   const expected = '0x722c33ad2cf10f5bd195c0504c9ae0ba91de07d779eacf34fa74d3f165b91c1e3ca505423a8c9d550d50ab9eb398d03b576232e43f69349bcc64b32baf1eb8161c';
   const sig = signListImages({ web3account: universeOwnerAccount, universeIdx });
   assert.equal(sig.signature, expected);
+});
+
+it('createAssetMutationInputs and createAssetMutation', () => {
+  // universe owner private key and corresponding account:
+  const universeOwnerPrivateKey = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
+  const universeOwnerAccount = new Web3().eth.accounts.privateKeyToAccount(universeOwnerPrivateKey);
+  // your universe id (obtained when signing up with Freeverse):
+  const universeIdx = 1;
+
+  // FreeverseID and nonce of user who will own this new asset:
+  // (the Nonce can be obtained via the query 'usersUniverseByUserIdAndUniverseId')
+  const ownerId = '0x8C146499db1685a522dE043d98092091dE2212DB';
+  const userNonce = 1;
+
+  // properties for asset
+  const propsJSON = {
+    name: 'Supercool Dragon',
+    description: 'Legendary creature that loves fire.',
+    image: 'ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz',
+    attributes: [
+      {
+        trait_type: 'Rarity',
+        value: 'Scarce',
+      },
+      {
+        trait_type: 'Level',
+        value: 5,
+      },
+      {
+        trait_type: 'Weight',
+        value: 123.5,
+      },
+    ],
+  };
+
+  const metadataJSON = {};
+  const { ops, signature } = createAssetMutationInputs({
+    universeOwnerAccount,
+    newAssetOwnerId: ownerId,
+    userNonce,
+    universeIdx,
+    propsJSON,
+    metadataJSON,
+  });
+  assert.equal(ops, '{\\"type\\":\\"create_asset\\",\\"msg\\":{\\"nonce\\":1,\\"owner_id\\":\\"0x8C146499db1685a522dE043d98092091dE2212DB\\",\\"props\\":\\"{\\\\\\"name\\\\\\":\\\\\\"Supercool Dragon\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Legendary creature that loves fire.\\\\\\",\\\\\\"image\\\\\\":\\\\\\"ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz\\\\\\",\\\\\\"attributes\\\\\\":[{\\\\\\"trait_type\\\\\\":\\\\\\"Rarity\\\\\\",\\\\\\"value\\\\\\":\\\\\\"Scarce\\\\\\"},{\\\\\\"trait_type\\\\\\":\\\\\\"Level\\\\\\",\\\\\\"value\\\\\\":5},{\\\\\\"trait_type\\\\\\":\\\\\\"Weight\\\\\\",\\\\\\"value\\\\\\":123.5}]}\\",\\"metadata\\":\\"{}\\"}}');
+  assert.equal(signature, '5b2df111532422e187df5bd538fdb0b2d8380e7bf78fe622b020e8c3813ad09f560feeba45931c921c02b4938e5280c40780e7e64a8b1c01a6cf40e025e5af691c');
+
+  const mutation = createAssetMutation({
+    universeOwnerAccount,
+    newAssetOwnerId: ownerId,
+    userNonce,
+    universeIdx,
+    propsJSON,
+    metadataJSON,
+  });
+  assert.equal(
+    mutation,
+    `
+    mutation {
+        execute(
+            input: {
+              ops: ["${ops}"],
+              signature: "${signature}",
+              universe: ${universeIdx},
+            }){
+              results
+            }}
+    `,
+  );
 });
