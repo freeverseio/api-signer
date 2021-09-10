@@ -75,6 +75,52 @@ function cleanOpsStringForGQL(opsString) {
 
 // Returns the two main strings (ops and signature)
 // to be used as inputs to Create Asset GraphQL mutation
+function updateAssetMutationInputs(
+  {
+    universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
+  },
+) {
+  // insert escape characters into metadata and props strings. This is necessary
+  // for correct parsing of the properties and metadata
+  const propsOps = jsonToCleanString(propsJSON);
+  const metadataOps = jsonToCleanString(metadataJSON);
+
+  /** *
+    * This is the string that will be signed by the universe owner,
+    * and registered with the underlying blockchain
+    * `{
+    *   "type":"set_asset_props",
+    *   "msg":{
+    *       "nonce":<assetNonce>,
+    *       "id": "<assetId>",
+    *       "props":"<updatedAssetProperties>",
+    *       "metadata": "<assetMetadata>"
+    *   }
+    * }`
+    */
+  const opsString = `{"type":"set_asset_props","msg":{"nonce":${assetNonce},"id":"${assetId}","props":"${propsOps}","metadata":"${metadataOps}"}}`;
+
+  // sign the operations string using the Web3 universe owner account
+  const sig = signExecuteMutation({
+    web3account: universeOwnerAccount,
+    universeIdx,
+    opsStr: opsString,
+  });
+
+  // remove the initial "0x" from the signature
+  const sigString = sig.signature.substring(2);
+
+  // add more escape characters to embed the ops string into the query
+  // this is necessary for correct graphQL parsing
+  const gqlOpsString = cleanOpsStringForGQL(opsString);
+  return {
+    ops: gqlOpsString,
+    signature: sigString,
+  };
+}
+
+// Returns the two main strings (ops and signature)
+// to be used as inputs to Create Asset GraphQL mutation
 function createAssetMutationInputs(
   {
     universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
@@ -86,7 +132,6 @@ function createAssetMutationInputs(
   const metadataOps = jsonToCleanString(metadataJSON);
 
   /** *
-    * CREATING THE OPERATIONS STRING
     * This is the string that will be signed by the universe owner,
     * and registered with the underlying blockchain
     * `{
@@ -120,37 +165,10 @@ function createAssetMutationInputs(
   };
 }
 
-// returns a human-readable string that can be used as GraphQL mutation
-function createAssetMutation(
-  {
-    universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
-  },
-) {
-  const { ops, signature } = createAssetMutationInputs({
-    universeOwnerAccount,
-    newAssetOwnerId,
-    userNonce,
-    universeIdx,
-    propsJSON,
-    metadataJSON,
-  });
-  return `
-    mutation {
-        execute(
-            input: {
-              ops: ["${ops}"],
-              signature: "${signature}",
-              universe: ${universeIdx},
-            }){
-              results
-            }}
-    `;
-}
-
 module.exports = {
   signExecuteMutation,
   signImageUpload,
   signListImages,
   createAssetMutationInputs,
-  createAssetMutation,
+  updateAssetMutationInputs,
 };
