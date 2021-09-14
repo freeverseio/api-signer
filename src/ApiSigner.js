@@ -20,13 +20,13 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const Web3 = require('web3');
+const Abi = require('web3-eth-abi');
+const Utils = require('web3-utils');
 
 // Concats values in vals array, interpreting them as defined by the types array
 // and hashes the result using keccak256
 function concatHash(types, vals) {
-  const web3 = new Web3();
-  return web3.utils.keccak256(web3.eth.abi.encodeParameters(types, vals));
+  return Utils.keccak256(Abi.encodeParameters(types, vals));
 }
 
 // Creates the digest to execute an opsStr and returns the signature of the digest.
@@ -100,7 +100,7 @@ function updateAssetMutationInputs(
     */
   const opsString = `{"type":"set_asset_props","msg":{"nonce":${assetNonce},"id":"${assetId}","props":"${propsOps}","metadata":"${metadataOps}"}}`;
 
-  // sign the operations string using the Web3 universe owner account
+  // sign the operations string using the Eth universe owner account
   const sig = signExecuteMutation({
     web3account: universeOwnerAccount,
     universeIdx,
@@ -146,7 +146,7 @@ function createAssetMutationInputs(
     */
   const opsString = `{"type":"create_asset","msg":{"nonce":${userNonce},"owner_id":"${newAssetOwnerId}","props":"${propsOps}","metadata":"${metadataOps}"}}`;
 
-  // sign the operations string using the Web3 universe owner account
+  // sign the operations string using the Eth universe owner account
   const sig = signExecuteMutation({
     web3account: universeOwnerAccount,
     universeIdx,
