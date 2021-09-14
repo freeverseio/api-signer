@@ -1,23 +1,25 @@
 {
     "name": "freeverse-apisigner-js",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "main": "src/ApiSigner.js",
     "description": "Library for creating and managing Living Assets",
     "homepage": "https://www.freeverse.io/",
     "author": "The Freeverse.io team <dev@freeverse.io> (https://www.freeverse.io/)",
-    "license" : "MIT",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/freeverseio/api-signer"
     },
     "private": false,
     "dependencies": {
-        "web3": "^1.5.2"
+        "web3-eth-abi": "^1.5.2",
+        "web3-utils": "^1.5.2"
     },
     "scripts": {
         "test": "./node_modules/.bin/mocha && npx eslint ."
     },
     "devDependencies": {
+        "web3-eth-accounts": "^1.5.2",
         "chai": "^4.3.4",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
