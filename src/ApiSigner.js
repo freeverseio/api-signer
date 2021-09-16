@@ -57,6 +57,15 @@ function signListImages({ web3account, universeIdx }) {
   return digestSignature;
 }
 
+function signDropPriority({ web3account, assetId, priority }) {
+  const digest = concatHash(
+    ['uint32', 'string'],
+    [priority, assetId],
+  );
+  const digestSignature = web3account.sign(digest);
+  return digestSignature;
+}
+
 /*
  * HELPER FUNCTIONS
  */
@@ -171,4 +180,5 @@ module.exports = {
   signListImages,
   createAssetMutationInputs,
   updateAssetMutationInputs,
+  signDropPriority,
 };

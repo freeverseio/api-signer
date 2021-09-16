@@ -7,6 +7,7 @@ const {
   signListImages,
   createAssetMutationInputs,
   updateAssetMutationInputs,
+  signDropPriority,
 } = require('../src/ApiSigner');
 
 it('encoding as strings using web3 library', () => {
@@ -85,6 +86,18 @@ it('signListImages', () => {
 
   const expected = '0x722c33ad2cf10f5bd195c0504c9ae0ba91de07d779eacf34fa74d3f165b91c1e3ca505423a8c9d550d50ab9eb398d03b576232e43f69349bcc64b32baf1eb8161c';
   const sig = signListImages({ web3account: universeOwnerAccount, universeIdx });
+  assert.equal(sig.signature, expected);
+});
+
+it('signDropPriority', () => {
+  const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
+
+  const expected = '0x676993a0064a55464a62f2a356433020b7e4eac1b47c86172b88e0a15433530e44c23ffbfec00df67bbbf57fe53e9c0c368cee9555617e6f1478c2c3ce32c1261b';
+  const sig = signDropPriority({
+    web3account: universeOwnerAccount,
+    assetId: '269599466671506397947685068811903227002082778120854472900238839975913',
+    priority: 42,
+  });
   assert.equal(sig.signature, expected);
 });
 
