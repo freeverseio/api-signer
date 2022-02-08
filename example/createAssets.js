@@ -1,50 +1,76 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-console */
+
+const program = require('commander');
 const Accounts = require('web3-eth-accounts');
 const fetch = require('isomorphic-fetch');
-const { createAsset, Tx } = require('./src/Ops');
+const { createAsset, Tx } = require('../src/Ops');
 
-const pvk = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
+program
+  .requiredOption('-p, --pvk <hex>')
+  .requiredOption('-u, --universe <int>')
+  .requiredOption('-a, --api <url>')
+  .option('-n, --number <int>', '', 500)
+  .parse(process.argv);
+
+const opts = program.opts();
+Object.keys(opts).forEach((key) => console.log(`${key}: ${opts[key]}`));
+
+const { pvk, universe, api, number } = program.opts();
+
+// const pvk = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
 const account = new Accounts().privateKeyToAccount(pvk);
+
 console.log(account.address);
 
-// let ops = [
-//   createAsset({
-//     nonce: 0, ownerId: '', metadata: '', props: {},
-//   }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-//   // createAsset({ nonce: 0, ownerId: '', metadata: '', props: {} }),
-// ];
+async function getUserServerNonce(freeverseId, universe) {
+  const getNonceQuery = `
+        query($freeverseId: String!, $universe: Int!) {
+            usersUniverseByUserIdAndUniverseId(universeId: $universe, userId: $freeverseId){
+              nonce
+            }
+          }
+        `;
 
-// console.log(mutation);
+  const response = await fetch(api, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: getNonceQuery,
+      variables: {
+        freeverseId,
+        universe: +universe,
+      },
+    }),
+  });
+  const result = await response.json();
+  return result.data.usersUniverseByUserIdAndUniverseId.nonce;
+}
 
-(async () => { // for (let nonce = 22569; nonce < 30000; ) {
-  //   console.log(nonce)
+(async () => {
+  const nonce = await getUserServerNonce(account.address, universe);
 
-  for (let nonce = 1000069; nonce < 10000000;) {
-    const tx = new Tx(0);
-    for (let i = 0; i < 500; i += 1) {
-      tx.push(createAsset({
-        nonce, ownerId: '0x291081e5a1bF0b9dF6633e4868C88e1FA48900e7', metadata: {}, props: {},
-      }));
-      nonce++;
-    }
-    const mutation = tx.mutation(account);
-    const a = fetch('https://api.blackhole.gorengine.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: mutation,
-      }),
-    }).then((response) => response.json())
-      .then(console.log)
-      .catch(console.error);
-    await a;
+  const tx = new Tx(0);
+  for (let i = 0; i < number; i += 1) {
+    tx.push(createAsset({
+      nonce: nonce + i,
+      ownerId: account.address,
+      metadata: {},
+      props: {
+        name: `Dragon ${nonce + i}`,
+        image: 'ipfs://QmNfpD4rAHAE737hkMhJoRs9Cs9HkbfVjrkw2Hn2yGd1i3',
+      },
+    }));
   }
-})();
-
-// }
+  const mutation = tx.mutation(account);
+  await fetch(api, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: mutation,
+    }),
+  }).then((response) => response.json())
+    .then(console.log)
+    .catch(console.error);
+}
+)();
