@@ -12,16 +12,16 @@
     },
     "private": false,
     "dependencies": {
-        "commander": "^9.0.0",
-        "isomorphic-fetch": "^3.0.0",
         "web3-eth-abi": "^1.5.2",
-        "web3-eth-accounts": "^1.5.2",
         "web3-utils": "^1.5.2"
     },
     "scripts": {
         "test": "./node_modules/.bin/mocha && npx eslint ."
     },
     "devDependencies": {
+        "commander": "^9.0.0",
+        "isomorphic-fetch": "^3.0.0",
+        "web3-eth-accounts": "^1.5.2",
         "chai": "^4.3.4",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
