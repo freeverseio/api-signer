@@ -22,6 +22,7 @@
 
 const Abi = require('web3-eth-abi');
 const Utils = require('web3-utils');
+const { createAssetString, updateAssetString } = require('./Ops');
 
 // Concats values in vals array, interpreting them as defined by the types array
 // and hashes the result using keccak256
@@ -66,17 +67,6 @@ function signDropPriority({ web3account, assetId, priority }) {
   return digestSignature;
 }
 
-/*
- * HELPER FUNCTIONS
- */
-
-// Converts a JSON object to a string, cleans spaces and escapes required characters
-function jsonToCleanString(inputJSON) {
-  let jsonString = JSON.stringify(inputJSON);
-  jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, '\\"');
-  return jsonString;
-}
-
 // Cleans ops string ready for GQL
 function cleanOpsStringForGQL(opsString) {
   return opsString.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -89,11 +79,6 @@ function updateAssetMutationInputs(
     universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
   },
 ) {
-  // insert escape characters into metadata and props strings. This is necessary
-  // for correct parsing of the properties and metadata
-  const propsOps = jsonToCleanString(propsJSON);
-  const metadataOps = jsonToCleanString(metadataJSON);
-
   /** *
     * This is the string that will be signed by the universe owner,
     * and registered with the underlying blockchain
@@ -107,7 +92,9 @@ function updateAssetMutationInputs(
     *   }
     * }`
     */
-  const opsString = `{"type":"set_asset_props","msg":{"nonce":${assetNonce},"id":"${assetId}","props":"${propsOps}","metadata":"${metadataOps}"}}`;
+  const opsString = updateAssetString({
+    nonce: assetNonce, assetId, metadata: metadataJSON, props: propsJSON,
+  });
 
   // sign the operations string using the Eth universe owner account
   const sig = signExecuteMutation({
@@ -135,11 +122,6 @@ function createAssetMutationInputs(
     universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
   },
 ) {
-  // insert escape characters into metadata and props strings. This is necessary
-  // for correct parsing of the properties and metadata
-  const propsOps = jsonToCleanString(propsJSON);
-  const metadataOps = jsonToCleanString(metadataJSON);
-
   /** *
     * This is the string that will be signed by the universe owner,
     * and registered with the underlying blockchain
@@ -153,7 +135,9 @@ function createAssetMutationInputs(
     *   }
     * }`
     */
-  const opsString = `{"type":"create_asset","msg":{"nonce":${userNonce},"owner_id":"${newAssetOwnerId}","props":"${propsOps}","metadata":"${metadataOps}"}}`;
+  const opsString = createAssetString({
+    nonce: userNonce, ownerId: newAssetOwnerId, metadata: metadataJSON, props: propsJSON,
+  });
 
   // sign the operations string using the Eth universe owner account
   const sig = signExecuteMutation({

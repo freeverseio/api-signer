@@ -1,28 +1,28 @@
 const Accounts = require('web3-eth-accounts');
 const { assert } = require('chai');
-const { createAsset, Tx } = require('../src/Ops');
+const { createAssetString, Tx } = require('../src/Ops');
 
 describe('create asset', () => {
   it('props empty json object', () => {
-    const op = createAsset({
+    const op = createAssetString({
       nonce: 0,
       ownerId: '',
       metadata: '',
       props: {},
     });
-    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","metadata":"\\"\\"","props":"{}"}}');
+    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{}","metadata":"\\"\\""}}');
   });
   it('props empty json object', () => {
-    const op = createAsset({
+    const op = createAssetString({
       nonce: 0,
       ownerId: '',
       metadata: '',
       props: { key: 'value' },
     });
-    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","metadata":"\\"\\"","props":"{\\"key\\":\\"value\\"}"}}');
+    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{\\"key\\":\\"value\\"}","metadata":"\\"\\""}}');
   });
   it('props is nested struct', () => {
-    const op = createAsset({
+    const op = createAssetString({
       nonce: 0,
       ownerId: '',
       metadata: '',
@@ -30,7 +30,7 @@ describe('create asset', () => {
         key: { key: { key: 'value' } },
       },
     });
-    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","metadata":"\\"\\"","props":"{\\"key\\":{\\"key\\":{\\"key\\":\\"value\\"}}}"}}');
+    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{\\"key\\":{\\"key\\":{\\"key\\":\\"value\\"}}}","metadata":"\\"\\""}}');
   });
 });
 

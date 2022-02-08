@@ -1,6 +1,7 @@
 const Utils = require('web3-utils');
 const Abi = require('web3-eth-abi');
 
+// Converts a JSON object to a string, cleans spaces and escapes required characters
 function jsonToCleanString(inputJSON) {
   let jsonString = JSON.stringify(inputJSON);
   jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, '\\"');
@@ -12,9 +13,17 @@ function cleanOpsStringForGQL(opsString) {
   return opsString.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-const createAsset = ({
+// insert escape characters into metadata and props strings. This is necessary
+// for correct parsing of the properties and metadata
+const createAssetString = ({
   nonce, ownerId, metadata, props,
-}) => (`{"type":"create_asset","msg":{"nonce":${nonce},"owner_id":"${ownerId}","metadata":"${jsonToCleanString(metadata)}","props":"${jsonToCleanString(props)}"}}`);
+}) => (`{"type":"create_asset","msg":{"nonce":${nonce},"owner_id":"${ownerId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
+
+// insert escape characters into metadata and props strings. This is necessary
+// for correct parsing of the properties and metadata
+const updateAssetString = ({
+  nonce, assetId, metadata, props,
+}) => (`{"type":"set_asset_props","msg":{"nonce":${nonce},"id":"${assetId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
 
 class Tx {
   constructor(universeId) {
@@ -59,5 +68,6 @@ class Tx {
 
 module.exports = {
   Tx,
-  createAsset,
+  createAssetString,
+  updateAssetString,
 };
