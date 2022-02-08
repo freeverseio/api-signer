@@ -1,6 +1,12 @@
 const Utils = require('web3-utils');
 const Abi = require('web3-eth-abi');
 
+// Concats values in vals array, interpreting them as defined by the types array
+// and hashes the result using keccak256
+function concatHash(types, vals) {
+  return Utils.keccak256(Abi.encodeParameters(types, vals));
+}
+
 // Converts a JSON object to a string, cleans spaces and escapes required characters
 function jsonToCleanString(inputJSON) {
   let jsonString = JSON.stringify(inputJSON);
@@ -40,7 +46,7 @@ class Tx {
     for (let i = 0; i < this.ops.length; i += 1) {
       ops += this.ops[i];
     }
-    return Utils.keccak256(Abi.encodeParameters(['uint32', 'string'], [this.universe, ops]));
+    return concatHash(['uint32', 'string'], [this.universe, ops]);
   }
 
   sign(web3Account) {
@@ -70,4 +76,5 @@ module.exports = {
   Tx,
   createAssetString,
   updateAssetString,
+  concatHash,
 };

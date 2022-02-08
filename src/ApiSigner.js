@@ -20,15 +20,7 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const Abi = require('web3-eth-abi');
-const Utils = require('web3-utils');
-const { createAssetString, updateAssetString } = require('./Ops');
-
-// Concats values in vals array, interpreting them as defined by the types array
-// and hashes the result using keccak256
-function concatHash(types, vals) {
-  return Utils.keccak256(Abi.encodeParameters(types, vals));
-}
+const { createAssetString, updateAssetString, concatHash } = require('./Ops');
 
 // Creates the digest to execute an opsStr and returns the signature of the digest.
 function signExecuteMutation({ web3account, universeIdx, opsStr }) {
