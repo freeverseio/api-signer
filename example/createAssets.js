@@ -53,7 +53,7 @@ async function getUserServerNonce(freeverseId, id) {
 (async () => {
   const nonce = await getUserServerNonce(account.address, universe);
 
-  const tx = new AtomicAssetOps(0);
+  const tx = new AtomicAssetOps({ universeId: 0 });
   for (let i = 0; i < number; i += 1) {
     tx.push(createAsset({
       nonce: nonce + i,

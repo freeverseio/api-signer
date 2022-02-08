@@ -32,7 +32,7 @@ const updateAssetString = ({
 }) => (`{"type":"set_asset_props","msg":{"nonce":${nonce},"id":"${assetId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
 
 class AtomicAssetOps {
-  constructor(universeId) {
+  constructor({ universeId }) {
     this.universe = universeId;
     this.ops = [];
   }

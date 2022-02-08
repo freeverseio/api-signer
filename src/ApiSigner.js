@@ -133,7 +133,7 @@ function createAssetMutationInputs(
     nonce: userNonce, ownerId: newAssetOwnerId, metadata: metadataJSON, props: propsJSON,
   });
 
-  const tx = new AtomicAssetOps(universeIdx);
+  const tx = new AtomicAssetOps({ universeId: universeIdx });
   tx.push(opsString);
 
   // sign the operations string using the Eth universe owner account
