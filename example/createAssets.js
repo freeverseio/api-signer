@@ -16,14 +16,16 @@ program
 const opts = program.opts();
 Object.keys(opts).forEach((key) => console.log(`${key}: ${opts[key]}`));
 
-const { pvk, universe, api, number } = program.opts();
+const {
+  pvk, universe, api, number,
+} = program.opts();
 
 // const pvk = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
 const account = new Accounts().privateKeyToAccount(pvk);
 
 console.log(account.address);
 
-async function getUserServerNonce(freeverseId, universe) {
+async function getUserServerNonce(freeverseId, id) {
   const getNonceQuery = `
         query($freeverseId: String!, $universe: Int!) {
             usersUniverseByUserIdAndUniverseId(universeId: $universe, userId: $freeverseId){
@@ -39,7 +41,7 @@ async function getUserServerNonce(freeverseId, universe) {
       query: getNonceQuery,
       variables: {
         freeverseId,
-        universe: +universe,
+        universe: +id,
       },
     }),
   });

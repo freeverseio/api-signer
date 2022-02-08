@@ -82,12 +82,4 @@ describe('Tx', () => {
       assert.equal(sign, '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c');
     });
   });
-  describe('mutation', () => {
-    it('Universe: 0, Ops: []', () => {
-      const tx = new Tx(0);
-      const m = tx.mutation(account);
-      // assert.equal(m, '');
-      // TODO
-    });
-  });
 });
