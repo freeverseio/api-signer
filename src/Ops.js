@@ -35,11 +35,7 @@ class Tx {
 
   mutation(web3Account) {
     let s = '';
-    this.ops.forEach((op) => {
-      s += '"';
-      s += op;
-      s += '",';
-    });
+    this.ops.forEach((op) => { s += `"${op}",`; });
 
     return `mutation {
     execute(
