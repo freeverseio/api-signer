@@ -7,11 +7,6 @@ function jsonToCleanString(inputJSON) {
   return jsonString;
 }
 
-// Cleans ops string ready for GQL
-function cleanOpsStringForGQL(opsString) {
-  return opsString.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-}
-
 const createAsset = ({
   nonce, ownerId, metadata, props,
 }) => (`{"type":"create_asset","msg":{"nonce":${nonce},"owner_id":"${ownerId}","metadata":"${jsonToCleanString(metadata)}","props":"${jsonToCleanString(props)}"}}`);
@@ -42,7 +37,7 @@ class Tx {
     let s = '[';
     for (let i = 0; i < this.ops.length; i += 1) {
       s += '"';
-      s += cleanOpsStringForGQL(this.ops[i]);
+      s += this.ops[i];
       s += '",';
     }
     s += ']';
