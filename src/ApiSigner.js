@@ -21,7 +21,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const {
-  createAssetString, updateAssetString, concatHash, Tx,
+  createAssetString, updateAssetString, concatHash, AtomicAssetOps,
 } = require('./Ops');
 
 // Creates the digest to execute an opsStr and returns the signature of the digest.
@@ -133,7 +133,7 @@ function createAssetMutationInputs(
     nonce: userNonce, ownerId: newAssetOwnerId, metadata: metadataJSON, props: propsJSON,
   });
 
-  const tx = new Tx(universeIdx);
+  const tx = new AtomicAssetOps(universeIdx);
   tx.push(opsString);
 
   // sign the operations string using the Eth universe owner account

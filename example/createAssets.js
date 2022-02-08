@@ -5,7 +5,7 @@
 const program = require('commander');
 const Accounts = require('web3-eth-accounts');
 const fetch = require('isomorphic-fetch');
-const { createAsset, Tx } = require('../src/Ops');
+const { createAsset, AtomicAssetOps } = require('../src/Ops');
 
 program
   .requiredOption('-p, --pvk <hex>')
@@ -53,7 +53,7 @@ async function getUserServerNonce(freeverseId, id) {
 (async () => {
   const nonce = await getUserServerNonce(account.address, universe);
 
-  const tx = new Tx(0);
+  const tx = new AtomicAssetOps(0);
   for (let i = 0; i < number; i += 1) {
     tx.push(createAsset({
       nonce: nonce + i,

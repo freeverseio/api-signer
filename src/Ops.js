@@ -31,7 +31,7 @@ const updateAssetString = ({
   nonce, assetId, metadata, props,
 }) => (`{"type":"set_asset_props","msg":{"nonce":${nonce},"id":"${assetId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
 
-class Tx {
+class AtomicAssetOps {
   constructor(universeId) {
     this.universe = universeId;
     this.ops = [];
@@ -41,7 +41,7 @@ class Tx {
     this.ops.push(op);
   }
 
-  hash() {
+  digest() {
     let ops = '';
     for (let i = 0; i < this.ops.length; i += 1) {
       ops += this.ops[i];
@@ -51,7 +51,7 @@ class Tx {
 
   sign(web3Account) {
     // remove the initial "0x" from the signature
-    return web3Account.sign(this.hash()).signature.substring(2);
+    return web3Account.sign(this.digest()).signature.substring(2);
   }
 
   gqlOpsString() {
@@ -80,7 +80,7 @@ class Tx {
 }
 
 module.exports = {
-  Tx,
+  AtomicAssetOps,
   createAssetString,
   updateAssetString,
   concatHash,

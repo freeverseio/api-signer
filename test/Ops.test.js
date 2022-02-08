@@ -1,6 +1,6 @@
 const Accounts = require('web3-eth-accounts');
 const { assert } = require('chai');
-const { createAssetString, Tx } = require('../src/Ops');
+const { createAssetString, AtomicAssetOps } = require('../src/Ops');
 
 describe('create asset', () => {
   it('props empty json object', () => {
@@ -34,48 +34,48 @@ describe('create asset', () => {
   });
 });
 
-describe('Tx', () => {
+describe('AtomicAssetOps', () => {
   const pvk = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
   const account = new Accounts().privateKeyToAccount(pvk);
 
-  describe('hash', () => {
+  describe('digest', () => {
     it('Universe: 0, Ops: []', () => {
-      const tx = new Tx(0);
-      const hash = tx.hash();
-      assert.equal(hash, '0xbc773c7d3e6e60a7ccaa29208f2ef3aa86fe273271dec70f60866a6c8c908762');
+      const tx = new AtomicAssetOps(0);
+      const digest = tx.digest();
+      assert.equal(digest, '0xbc773c7d3e6e60a7ccaa29208f2ef3aa86fe273271dec70f60866a6c8c908762');
     });
 
     it('Universe: 0, Ops: ["{}"]', () => {
-      const tx = new Tx(0);
+      const tx = new AtomicAssetOps(0);
       tx.push('{}');
-      const hash = tx.hash();
-      assert.equal(hash, '0x45c34096da2ccbe384880c7a4c9eba448696fbd41476e7f9d8a15275ef99565d');
+      const digest = tx.digest();
+      assert.equal(digest, '0x45c34096da2ccbe384880c7a4c9eba448696fbd41476e7f9d8a15275ef99565d');
     });
 
     it('Universe: 1, Ops: ["{}"]', () => {
-      const tx = new Tx(1);
+      const tx = new AtomicAssetOps(1);
       tx.push('{}');
-      const hash = tx.hash();
-      assert.equal(hash, '0x43c340b66afd13155d9854b01fcf294286a196e7fe40c81752d0d929d9e468ba');
+      const digest = tx.digest();
+      assert.equal(digest, '0x43c340b66afd13155d9854b01fcf294286a196e7fe40c81752d0d929d9e468ba');
     });
 
     it('Universe: 1, Ops: ["{}", "{2}"]', () => {
-      const tx = new Tx(1);
+      const tx = new AtomicAssetOps(1);
       tx.push('{}');
       tx.push('{2}');
-      const hash = tx.hash();
-      assert.equal(hash, '0x2e4459146d6c58233bfeac1c3bff11d147b0bb90cd4f4eb1a286e5efbbe5bffe');
+      const digest = tx.digest();
+      assert.equal(digest, '0x2e4459146d6c58233bfeac1c3bff11d147b0bb90cd4f4eb1a286e5efbbe5bffe');
     });
   });
   describe('sign', () => {
     it('Universe: 0, Ops: []', () => {
-      const tx = new Tx(0);
+      const tx = new AtomicAssetOps(0);
       const sign = tx.sign(account);
       assert.equal(sign, '07a077de7b4dc56c5e8a686b081c269ee71da3bdd148e67f3be3f146b46617b54248c0ca51a4b9def97de763d28ad61736ef100bd8f03a0bac22e22ac74660241c');
     });
 
     it('Universe: 1, Ops: ["{}", "{2}"]', () => {
-      const tx = new Tx(1);
+      const tx = new AtomicAssetOps(1);
       tx.push('{}');
       tx.push('{2}');
       const sign = tx.sign(account);
