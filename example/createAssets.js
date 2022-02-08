@@ -55,15 +55,17 @@ async function getUserServerNonce(freeverseId, id) {
 
   const tx = new AtomicAssetOps({ universeId: 0 });
   for (let i = 0; i < number; i += 1) {
-    tx.push(createAsset({
-      nonce: nonce + i,
-      ownerId: account.address,
-      metadata: {},
-      props: {
-        name: `Dragon ${nonce + i}`,
-        image: 'ipfs://QmNfpD4rAHAE737hkMhJoRs9Cs9HkbfVjrkw2Hn2yGd1i3',
-      },
-    }));
+    tx.push({
+      op: createAsset({
+        nonce: nonce + i,
+        ownerId: account.address,
+        metadata: {},
+        props: {
+          name: `Dragon ${nonce + i}`,
+          image: 'ipfs://QmNfpD4rAHAE737hkMhJoRs9Cs9HkbfVjrkw2Hn2yGd1i3',
+        },
+      }),
+    });
   }
   const mutation = tx.mutation(account);
   await fetch(api, {

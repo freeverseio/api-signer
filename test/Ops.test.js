@@ -47,22 +47,22 @@ describe('AtomicAssetOps', () => {
 
     it('Universe: 0, Ops: ["{}"]', () => {
       const tx = new AtomicAssetOps({ universeId: 0 });
-      tx.push('{}');
+      tx.push({ op: '{}' });
       const digest = tx.digest();
       assert.equal(digest, '0x45c34096da2ccbe384880c7a4c9eba448696fbd41476e7f9d8a15275ef99565d');
     });
 
     it('Universe: 1, Ops: ["{}"]', () => {
       const tx = new AtomicAssetOps({ universeId: 1 });
-      tx.push('{}');
+      tx.push({ op: '{}' });
       const digest = tx.digest();
       assert.equal(digest, '0x43c340b66afd13155d9854b01fcf294286a196e7fe40c81752d0d929d9e468ba');
     });
 
     it('Universe: 1, Ops: ["{}", "{2}"]', () => {
       const tx = new AtomicAssetOps({ universeId: 1 });
-      tx.push('{}');
-      tx.push('{2}');
+      tx.push({ op: '{}' });
+      tx.push({ op: '{2}' });
       const digest = tx.digest();
       assert.equal(digest, '0x2e4459146d6c58233bfeac1c3bff11d147b0bb90cd4f4eb1a286e5efbbe5bffe');
     });
@@ -76,8 +76,8 @@ describe('AtomicAssetOps', () => {
 
     it('Universe: 1, Ops: ["{}", "{2}"]', () => {
       const tx = new AtomicAssetOps({ universeId: 1 });
-      tx.push('{}');
-      tx.push('{2}');
+      tx.push({ op: '{}' });
+      tx.push({ op: '{2}' });
       const sign = tx.sign(account);
       assert.equal(sign, '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c');
     });

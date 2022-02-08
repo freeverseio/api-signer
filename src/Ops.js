@@ -37,7 +37,7 @@ class AtomicAssetOps {
     this.ops = [];
   }
 
-  push(op) {
+  push({ op }) {
     this.ops.push(op);
   }
 
