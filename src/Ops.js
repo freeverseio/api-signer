@@ -50,17 +50,24 @@ class Tx {
   }
 
   sign(web3Account) {
+    // remove the initial "0x" from the signature
     return web3Account.sign(this.hash()).signature.substring(2);
   }
 
-  mutation(web3Account) {
+  gqlOpsString() {
     let s = '';
     this.ops.forEach((op) => { s += `"${cleanOpsStringForGQL(op)}",`; });
+    // remove the last ","
+    return s.slice(0, -1);
+  }
+
+  mutation(web3Account) {
+    const gqlOps = this.gqlOpsString();
 
     return `mutation {
     execute(
       input: {
-        ops: [${s}],
+        ops: [${gqlOps}],
         signature: "${this.sign(web3Account)}",
         universe: ${this.universe},
       }

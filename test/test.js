@@ -145,7 +145,7 @@ it('createAssetMutationInputs', () => {
     propsJSON,
     metadataJSON,
   });
-  assert.equal(ops, '{\\"type\\":\\"create_asset\\",\\"msg\\":{\\"nonce\\":1,\\"owner_id\\":\\"0x8C146499db1685a522dE043d98092091dE2212DB\\",\\"props\\":\\"{\\\\\\"name\\\\\\":\\\\\\"Supercool Dragon\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Legendary creature that loves fire.\\\\\\",\\\\\\"image\\\\\\":\\\\\\"ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz\\\\\\",\\\\\\"attributes\\\\\\":[{\\\\\\"trait_type\\\\\\":\\\\\\"Rarity\\\\\\",\\\\\\"value\\\\\\":\\\\\\"Scarce\\\\\\"},{\\\\\\"trait_type\\\\\\":\\\\\\"Level\\\\\\",\\\\\\"value\\\\\\":5},{\\\\\\"trait_type\\\\\\":\\\\\\"Weight\\\\\\",\\\\\\"value\\\\\\":123.5}]}\\",\\"metadata\\":\\"{\\\\\\"userIDInMyServer\\\\\\":21323543}\\"}}');
+  assert.equal(ops, '"{\\"type\\":\\"create_asset\\",\\"msg\\":{\\"nonce\\":1,\\"owner_id\\":\\"0x8C146499db1685a522dE043d98092091dE2212DB\\",\\"props\\":\\"{\\\\\\"name\\\\\\":\\\\\\"Supercool Dragon\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Legendary creature that loves fire.\\\\\\",\\\\\\"image\\\\\\":\\\\\\"ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz\\\\\\",\\\\\\"attributes\\\\\\":[{\\\\\\"trait_type\\\\\\":\\\\\\"Rarity\\\\\\",\\\\\\"value\\\\\\":\\\\\\"Scarce\\\\\\"},{\\\\\\"trait_type\\\\\\":\\\\\\"Level\\\\\\",\\\\\\"value\\\\\\":5},{\\\\\\"trait_type\\\\\\":\\\\\\"Weight\\\\\\",\\\\\\"value\\\\\\":123.5}]}\\",\\"metadata\\":\\"{\\\\\\"userIDInMyServer\\\\\\":21323543}\\"}}"');
   assert.equal(signature, '35fdf0b60bc9af271191448dfb12c49fc8b3b7aa93173cb9fd772f39ed3860ad68bf8209384613508930d5dc76ab9f01c08a8fc9586c1cdc681f5832b6805e171b');
 });
 

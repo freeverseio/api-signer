@@ -20,7 +20,9 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const { createAssetString, updateAssetString, concatHash } = require('./Ops');
+const {
+  createAssetString, updateAssetString, concatHash, Tx,
+} = require('./Ops');
 
 // Creates the digest to execute an opsStr and returns the signature of the digest.
 function signExecuteMutation({ web3account, universeIdx, opsStr }) {
@@ -131,19 +133,15 @@ function createAssetMutationInputs(
     nonce: userNonce, ownerId: newAssetOwnerId, metadata: metadataJSON, props: propsJSON,
   });
 
-  // sign the operations string using the Eth universe owner account
-  const sig = signExecuteMutation({
-    web3account: universeOwnerAccount,
-    universeIdx,
-    opsStr: opsString,
-  });
+  const tx = new Tx(universeIdx);
+  tx.push(opsString);
 
-  // remove the initial "0x" from the signature
-  const sigString = sig.signature.substring(2);
+  // sign the operations string using the Eth universe owner account
+  const sigString = tx.sign(universeOwnerAccount);
 
   // add more escape characters to embed the ops string into the query
   // this is necessary for correct graphQL parsing
-  const gqlOpsString = cleanOpsStringForGQL(opsString);
+  const gqlOpsString = tx.gqlOpsString();
   return {
     ops: gqlOpsString,
     signature: sigString,
