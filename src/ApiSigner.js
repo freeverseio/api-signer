@@ -63,11 +63,6 @@ function signDropPriority({ web3Account, assetId, priority }) {
   return digestSignature;
 }
 
-// Cleans ops string ready for GQL
-function cleanOpsStringForGQL(opsString) {
-  return opsString.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-}
-
 // Returns the two main strings (ops and signature)
 // to be used as inputs to Create Asset GraphQL mutation
 function updateAssetMutationInputs(
@@ -93,18 +88,14 @@ function updateAssetMutationInputs(
   });
 
   // sign the operations string using the Eth universe owner account
-  const sig = signExecuteMutation({
-    web3Account: universeOwnerAccount,
-    universeIdx,
-    opsStr: opsString,
-  });
+  const tx = new AtomicAssetOps({ universeId: universeIdx });
+  tx.push({ op: opsString });
 
-  // remove the initial "0x" from the signature
-  const sigString = sig.signature.substring(2);
+  const sigString = tx.sign({ web3Account: universeOwnerAccount });
 
   // add more escape characters to embed the ops string into the query
   // this is necessary for correct graphQL parsing
-  const gqlOpsString = cleanOpsStringForGQL(opsString);
+  const gqlOpsString = tx.gqlOpsString();
   return {
     ops: gqlOpsString,
     signature: sigString,
