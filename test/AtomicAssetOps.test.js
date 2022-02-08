@@ -1,6 +1,9 @@
 const Accounts = require('web3-eth-accounts');
 const { assert } = require('chai');
-const { createAssetString, AtomicAssetOps } = require('../src/Ops');
+const {
+  createAssetString,
+} = require('../src/Utils');
+const { AtomicAssetOps } = require('../src/AtomicAssetOps');
 
 describe('create asset', () => {
   it('props empty json object', () => {

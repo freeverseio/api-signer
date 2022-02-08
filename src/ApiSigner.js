@@ -24,7 +24,7 @@ const {
   createAssetString, updateAssetString, concatHash,
 } = require('./Utils');
 
-const { AtomicAssetOps } = require('./Ops');
+const { AtomicAssetOps } = require('./AtomicAssetOps');
 
 // Creates the digest to execute an opsStr and returns the signature of the digest.
 function signExecuteMutation({ web3Account, universeIdx, opsStr }) {

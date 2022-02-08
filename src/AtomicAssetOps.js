@@ -1,5 +1,5 @@
 const {
-  createAssetString, updateAssetString, concatHash, cleanOpsStringForGQL,
+  concatHash, cleanOpsStringForGQL,
 } = require('./Utils');
 
 class AtomicAssetOps {
@@ -52,7 +52,4 @@ class AtomicAssetOps {
 
 module.exports = {
   AtomicAssetOps,
-  createAssetString,
-  updateAssetString,
-  concatHash,
 };

@@ -5,7 +5,8 @@
 const program = require('commander');
 const Accounts = require('web3-eth-accounts');
 const fetch = require('isomorphic-fetch');
-const { createAsset, AtomicAssetOps } = require('../src/Ops');
+const { createAsset } = require('../src/Utils');
+const { AtomicAssetOps } = require('../src/AtomicAssetOps');
 
 program
   .requiredOption('-p, --pvk <hex>')
