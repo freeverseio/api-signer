@@ -34,18 +34,17 @@ class Tx {
   }
 
   mutation(web3Account) {
-    let s = '[';
-    for (let i = 0; i < this.ops.length; i += 1) {
+    let s = '';
+    this.ops.forEach((op) => {
       s += '"';
-      s += this.ops[i];
+      s += op;
       s += '",';
-    }
-    s += ']';
+    });
 
     return `mutation {
     execute(
       input: {
-        ops: ${s},
+        ops: [${s}],
         signature: "${this.sign(web3Account)}",
         universe: ${this.universe},
       }
