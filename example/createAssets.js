@@ -67,7 +67,7 @@ async function getUserServerNonce(freeverseId, id) {
       }),
     });
   }
-  const mutation = tx.mutation(account);
+  const mutation = tx.mutation({ web3Account: account });
   await fetch(api, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -49,7 +49,7 @@ class AtomicAssetOps {
     return concatHash(['uint32', 'string'], [this.universe, ops]);
   }
 
-  sign(web3Account) {
+  sign({ web3Account }) {
     // remove the initial "0x" from the signature
     return web3Account.sign(this.digest()).signature.substring(2);
   }
@@ -61,14 +61,14 @@ class AtomicAssetOps {
     return s.slice(0, -1);
   }
 
-  mutation(web3Account) {
+  mutation({ web3Account }) {
     const gqlOps = this.gqlOpsString();
 
     return `mutation {
     execute(
       input: {
         ops: [${gqlOps}],
-        signature: "${this.sign(web3Account)}",
+        signature: "${this.sign({ web3Account })}",
         universe: ${this.universe},
       }
     )

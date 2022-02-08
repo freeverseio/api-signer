@@ -25,39 +25,39 @@ const {
 } = require('./Ops');
 
 // Creates the digest to execute an opsStr and returns the signature of the digest.
-function signExecuteMutation({ web3account, universeIdx, opsStr }) {
+function signExecuteMutation({ web3Account, universeIdx, opsStr }) {
   const digest = concatHash(
     ['uint32', 'string'],
     [universeIdx, opsStr],
   );
-  const digestSignature = web3account.sign(digest);
+  const digestSignature = web3Account.sign(digest);
   return digestSignature;
 }
 
 // Creates the digest to upload an image and returns the signature of the digest.
-function signImageUpload({ web3account, fileHash, universeIdx }) {
+function signImageUpload({ web3Account, fileHash, universeIdx }) {
   const digest = concatHash(
     ['string', 'uint32'],
     [fileHash, universeIdx],
   );
-  const digestSignature = web3account.sign(digest);
+  const digestSignature = web3Account.sign(digest);
   return digestSignature;
 }
 
 // Creates the digest to query the list of available images in a universe,
 // and returns the signature of the digest.
-function signListImages({ web3account, universeIdx }) {
+function signListImages({ web3Account, universeIdx }) {
   const digest = concatHash(['uint32'], [universeIdx]);
-  const digestSignature = web3account.sign(digest);
+  const digestSignature = web3Account.sign(digest);
   return digestSignature;
 }
 
-function signDropPriority({ web3account, assetId, priority }) {
+function signDropPriority({ web3Account, assetId, priority }) {
   const digest = concatHash(
     ['uint32', 'string'],
     [priority, assetId],
   );
-  const digestSignature = web3account.sign(digest);
+  const digestSignature = web3Account.sign(digest);
   return digestSignature;
 }
 
@@ -92,7 +92,7 @@ function updateAssetMutationInputs(
 
   // sign the operations string using the Eth universe owner account
   const sig = signExecuteMutation({
-    web3account: universeOwnerAccount,
+    web3Account: universeOwnerAccount,
     universeIdx,
     opsStr: opsString,
   });
@@ -137,7 +137,7 @@ function createAssetMutationInputs(
   tx.push({ op: opsString });
 
   // sign the operations string using the Eth universe owner account
-  const sigString = tx.sign(universeOwnerAccount);
+  const sigString = tx.sign({ web3Account: universeOwnerAccount });
 
   // add more escape characters to embed the ops string into the query
   // this is necessary for correct graphQL parsing
