@@ -55,6 +55,8 @@ function signDropPriority({ web3Account, assetId, priority }) {
 
 // Returns the two main strings (ops and signature)
 // to be used as inputs to Create Asset GraphQL mutation
+// This function will be deprecated in future releases,
+// please use the AtomicAssetOps class instead.
 function updateAssetMutationInputs(
   {
     universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
@@ -94,6 +96,8 @@ function updateAssetMutationInputs(
 
 // Returns the two main strings (ops and signature)
 // to be used as inputs to Create Asset GraphQL mutation
+// This function will be deprecated in future releases,
+// please use the AtomicAssetOps class instead.
 function createAssetMutationInputs(
   {
     universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
