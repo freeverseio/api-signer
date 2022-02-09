@@ -2,6 +2,7 @@ const Accounts = require('web3-eth-accounts');
 const { assert } = require('chai');
 const {
   createAssetString,
+  updateAssetString,
 } = require('../src/Utils');
 const { AtomicAssetOps } = require('../src/AtomicAssetOps');
 
@@ -34,6 +35,38 @@ describe('create asset', () => {
       },
     });
     assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{\\"key\\":{\\"key\\":{\\"key\\":\\"value\\"}}}","metadata":"\\"\\""}}');
+  });
+});
+
+describe('update asset', () => {
+  it('props empty json object', () => {
+    const op = updateAssetString({
+      nonce: 0,
+      assetId: '',
+      metadata: '',
+      props: {},
+    });
+    assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{}","metadata":"\\"\\""}}');
+  });
+  it('props empty json object', () => {
+    const op = updateAssetString({
+      nonce: 0,
+      assetId: '',
+      metadata: '',
+      props: { key: 'value' },
+    });
+    assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{\\"key\\":\\"value\\"}","metadata":"\\"\\""}}');
+  });
+  it('props is nested struct', () => {
+    const op = updateAssetString({
+      nonce: 0,
+      assetId: '',
+      metadata: '',
+      props: {
+        key: { key: { key: 'value' } },
+      },
+    });
+    assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{\\"key\\":{\\"key\\":{\\"key\\":\\"value\\"}}}","metadata":"\\"\\""}}');
   });
 });
 
@@ -83,6 +116,21 @@ describe('AtomicAssetOps', () => {
       tx.push({ op: '{2}' });
       const sign = tx.sign({ web3Account: account });
       assert.equal(sign, '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c');
+    });
+  });
+  describe('gqlOpsString', () => {
+    it('Universe: 0, Ops: []', () => {
+      const tx = new AtomicAssetOps({ universeId: 0 });
+      const opsStr = tx.gqlOpsString();
+      assert.equal(opsStr, '');
+    });
+
+    it('Universe: 1, Ops: ["{}", "{2}"]', () => {
+      const tx = new AtomicAssetOps({ universeId: 1 });
+      tx.push({ op: '{}' });
+      tx.push({ op: '{2}' });
+      const opsStr = tx.gqlOpsString();
+      assert.equal(opsStr, '"{}","{2}"');
     });
   });
 });
