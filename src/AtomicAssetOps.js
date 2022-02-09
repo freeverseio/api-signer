@@ -39,11 +39,9 @@ class AtomicAssetOps {
 
   // builds the digest that will need to be signed
   digest() {
-    let ops = '';
-    for (let i = 0; i < this.ops.length; i += 1) {
-      ops += this.ops[i];
-    }
-    return concatHash(['uint32', 'string'], [this.universe, ops]);
+    let s = '';
+    this.ops.forEach((op) => { s += op; });
+    return concatHash(['uint32', 'string'], [this.universe, s]);
   }
 
   // signs the digest, the signature needs to be sent in the query
