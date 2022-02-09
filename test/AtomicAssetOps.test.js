@@ -133,4 +133,23 @@ describe('AtomicAssetOps', () => {
       assert.equal(opsStr, '"{}","{2}"');
     });
   });
+  describe('mutation', () => {
+    it('Universe: 0, Ops: []', () => {
+      const tx = new AtomicAssetOps({ universeId: 0 });
+      // remove all spaces and new lines, so that it can be compared with expected:
+      const mut = tx.mutation({ web3Account: account }).replace(/ /g, '').replace(/(\r\n|\n|\r)/gm, '');
+      const expected = 'mutation{execute(input:{ops:[],signature:"07a077de7b4dc56c5e8a686b081c269ee71da3bdd148e67f3be3f146b46617b54248c0ca51a4b9def97de763d28ad61736ef100bd8f03a0bac22e22ac74660241c",universe:0,}){results}}';
+      assert.equal(mut, expected);
+    });
+
+    it('Universe: 1, Ops: ["{}", "{2}"]', () => {
+      const tx = new AtomicAssetOps({ universeId: 1 });
+      tx.push({ op: '{}' });
+      tx.push({ op: '{2}' });
+      // remove all spaces and new lines, so that it can be compared with expected:
+      const mut = tx.mutation({ web3Account: account }).replace(/(\r\n|\n|\r)/gm, '').replace(/ /g, '').replace(/\t/g, '');
+      const expected = 'mutation{execute(input:{ops:["{}","{2}"],signature:"608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c",universe:1,}){results}}';
+      assert.equal(mut, expected);
+    });
+  });
 });
