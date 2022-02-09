@@ -1,5 +1,4 @@
 const {
-  signExecuteMutation,
   signImageUpload,
   signListImages,
   createAssetMutationInputs,
@@ -15,7 +14,6 @@ const {
 const { AtomicAssetOps } = require('./AtomicAssetOps');
 
 module.exports = {
-  signExecuteMutation,
   signImageUpload,
   signListImages,
   createAssetMutationInputs,

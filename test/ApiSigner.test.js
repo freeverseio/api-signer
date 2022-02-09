@@ -2,13 +2,15 @@ const { assert } = require('chai');
 const Abi = require('web3-eth-abi');
 const Accounts = require('web3-eth-accounts');
 const {
-  signExecuteMutation,
   signImageUpload,
   signListImages,
   createAssetMutationInputs,
   updateAssetMutationInputs,
   signDropPriority,
 } = require('../src/ApiSigner');
+const {
+  signExecuteMutation,
+} = require('../src/Utils');
 
 it('encoding as strings using web3 library', () => {
   assert.equal(Abi.encodeParameters(['string'], ['']), '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000');

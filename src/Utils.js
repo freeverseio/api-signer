@@ -31,9 +31,18 @@ const updateAssetString = ({
   nonce, assetId, metadata, props,
 }) => (`{"type":"set_asset_props","msg":{"nonce":${nonce},"id":"${assetId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
 
+function signExecuteMutation({ web3Account, universeIdx, opsStr }) {
+  const digest = concatHash(
+    ['uint32', 'string'],
+    [universeIdx, opsStr],
+  );
+  const digestSignature = web3Account.sign(digest);
+  return digestSignature;
+}
 module.exports = {
   createAssetString,
   updateAssetString,
   cleanOpsStringForGQL,
   concatHash,
+  signExecuteMutation,
 };

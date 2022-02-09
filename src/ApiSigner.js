@@ -26,16 +26,6 @@ const {
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
 
-// Creates the digest to execute an opsStr and returns the signature of the digest.
-function signExecuteMutation({ web3Account, universeIdx, opsStr }) {
-  const digest = concatHash(
-    ['uint32', 'string'],
-    [universeIdx, opsStr],
-  );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
-}
-
 // Creates the digest to upload an image and returns the signature of the digest.
 function signImageUpload({ web3Account, fileHash, universeIdx }) {
   const digest = concatHash(
@@ -142,7 +132,6 @@ function createAssetMutationInputs(
 }
 
 module.exports = {
-  signExecuteMutation,
   signImageUpload,
   signListImages,
   createAssetMutationInputs,
