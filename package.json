@@ -1,7 +1,7 @@
 {
     "name": "freeverse-apisigner-js",
-    "version": "1.0.4",
-    "main": "src/ApiSigner.js",
+    "version": "1.0.5",
+    "main": "src/index.js",
     "description": "Library for creating and managing Living Assets",
     "homepage": "https://www.freeverse.io/",
     "author": "The Freeverse.io team <dev@freeverse.io> (https://www.freeverse.io/)",
@@ -19,6 +19,8 @@
         "test": "./node_modules/.bin/mocha && npx eslint ."
     },
     "devDependencies": {
+        "commander": "^9.0.0",
+        "isomorphic-fetch": "^3.0.0",
         "web3-eth-accounts": "^1.5.2",
         "chai": "^4.3.4",
         "eslint": "^7.32.0",
