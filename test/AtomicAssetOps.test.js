@@ -1,14 +1,14 @@
 const Accounts = require('web3-eth-accounts');
 const { assert } = require('chai');
 const {
-  createAssetString,
-  updateAssetString,
+  createAssetOp,
+  updateAssetOp,
 } = require('../src/Utils');
 const { AtomicAssetOps } = require('../src/AtomicAssetOps');
 
 describe('create asset', () => {
   it('props empty json object', () => {
-    const op = createAssetString({
+    const op = createAssetOp({
       nonce: 0,
       ownerId: '',
       metadata: '',
@@ -17,7 +17,7 @@ describe('create asset', () => {
     assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{}","metadata":"\\"\\""}}');
   });
   it('props empty json object', () => {
-    const op = createAssetString({
+    const op = createAssetOp({
       nonce: 0,
       ownerId: '',
       metadata: '',
@@ -26,7 +26,7 @@ describe('create asset', () => {
     assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{\\"key\\":\\"value\\"}","metadata":"\\"\\""}}');
   });
   it('props is nested struct', () => {
-    const op = createAssetString({
+    const op = createAssetOp({
       nonce: 0,
       ownerId: '',
       metadata: '',
@@ -40,7 +40,7 @@ describe('create asset', () => {
 
 describe('update asset', () => {
   it('props empty json object', () => {
-    const op = updateAssetString({
+    const op = updateAssetOp({
       nonce: 0,
       assetId: '',
       metadata: '',
@@ -49,7 +49,7 @@ describe('update asset', () => {
     assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{}","metadata":"\\"\\""}}');
   });
   it('props empty json object', () => {
-    const op = updateAssetString({
+    const op = updateAssetOp({
       nonce: 0,
       assetId: '',
       metadata: '',
@@ -58,7 +58,7 @@ describe('update asset', () => {
     assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{\\"key\\":\\"value\\"}","metadata":"\\"\\""}}');
   });
   it('props is nested struct', () => {
-    const op = updateAssetString({
+    const op = updateAssetOp({
       nonce: 0,
       assetId: '',
       metadata: '',

@@ -21,7 +21,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const {
-  createAssetString, updateAssetString, concatHash,
+  createAssetOp, updateAssetOp, concatHash,
 } = require('./Utils');
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
@@ -75,7 +75,7 @@ function updateAssetMutationInputs(
     *   }
     * }`
     */
-  const opsString = updateAssetString({
+  const opsString = updateAssetOp({
     nonce: assetNonce, assetId, metadata: metadataJSON, props: propsJSON,
   });
 
@@ -116,7 +116,7 @@ function createAssetMutationInputs(
     *   }
     * }`
     */
-  const opsString = createAssetString({
+  const opsString = createAssetOp({
     nonce: userNonce, ownerId: newAssetOwnerId, metadata: metadataJSON, props: propsJSON,
   });
 

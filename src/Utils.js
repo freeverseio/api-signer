@@ -19,18 +19,19 @@ function cleanOpsStringForGQL(opsString) {
   return opsString.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-// insert escape characters into metadata and props strings. This is necessary
-// for correct parsing of the properties and metadata
-const createAssetString = ({
+// Returns the string that corresponds to a CreateAsset operation.
+// It inserts escape characters that are necessary for correct parsing.
+const createAssetOp = ({
   nonce, ownerId, metadata, props,
 }) => (`{"type":"create_asset","msg":{"nonce":${nonce},"owner_id":"${ownerId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
 
-// insert escape characters into metadata and props strings. This is necessary
-// for correct parsing of the properties and metadata
-const updateAssetString = ({
+// Returns the string that corresponds to an UpdateAsset operation.
+// It inserts escape characters that are necessary for correct parsing.
+const updateAssetOp = ({
   nonce, assetId, metadata, props,
 }) => (`{"type":"set_asset_props","msg":{"nonce":${nonce},"id":"${assetId}","props":"${jsonToCleanString(props)}","metadata":"${jsonToCleanString(metadata)}"}}`);
 
+// Returns the signature of the digest of a set of operations.
 function signExecuteMutation({ web3Account, universeIdx, opsStr }) {
   const digest = concatHash(
     ['uint32', 'string'],
@@ -39,9 +40,10 @@ function signExecuteMutation({ web3Account, universeIdx, opsStr }) {
   const digestSignature = web3Account.sign(digest);
   return digestSignature;
 }
+
 module.exports = {
-  createAssetString,
-  updateAssetString,
+  createAssetOp,
+  updateAssetOp,
   cleanOpsStringForGQL,
   concatHash,
   signExecuteMutation,

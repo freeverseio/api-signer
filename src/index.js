@@ -7,8 +7,8 @@ const {
 } = require('./ApiSigner');
 
 const {
-  createAssetString,
-  updateAssetString,
+  createAssetOp,
+  updateAssetOp,
 } = require('./Utils');
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
@@ -19,7 +19,7 @@ module.exports = {
   createAssetMutationInputs,
   updateAssetMutationInputs,
   signDropPriority,
-  createAssetString,
-  updateAssetString,
+  createAssetOp,
+  updateAssetOp,
   AtomicAssetOps,
 };
