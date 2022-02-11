@@ -7,6 +7,12 @@ function concatHash(types, vals) {
   return Utils.keccak256(Abi.encodeParameters(types, vals));
 }
 
+// Removes '0x' from the start of a string, in case it exists
+function remove0x(str) {
+  if (str.substring(0, 2) === '0x') return str.substring(2);
+  return str;
+}
+
 // Converts a JSON object to a string, cleans spaces and escapes required characters
 function jsonToCleanString(inputJSON) {
   let jsonString = JSON.stringify(inputJSON);
@@ -47,4 +53,5 @@ module.exports = {
   cleanOpsStringForGQL,
   concatHash,
   signExecuteMutation,
+  remove0x,
 };

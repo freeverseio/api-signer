@@ -54,9 +54,9 @@ async function getUserServerNonce(freeverseId, id) {
 (async () => {
   const nonce = await getUserServerNonce(account.address, universe);
 
-  const tx = new AtomicAssetOps({ universeId: 0 });
+  const assetOps = new AtomicAssetOps({ universeId: 0 });
   for (let i = 0; i < number; i += 1) {
-    tx.push({
+    assetOps.push({
       op: createAsset({
         nonce: nonce + i,
         ownerId: account.address,
@@ -68,7 +68,8 @@ async function getUserServerNonce(freeverseId, id) {
       }),
     });
   }
-  const mutation = tx.mutation({ web3Account: account });
+  const sig = assetOps.sign({ web3Account: account });
+  const mutation = assetOps.mutation({ signature: sig });
   await fetch(api, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

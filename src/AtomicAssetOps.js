@@ -21,7 +21,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const {
-  concatHash, cleanOpsStringForGQL,
+  concatHash, cleanOpsStringForGQL, remove0x,
 } = require('./Utils');
 
 // Class to build queries required to create and update assets
@@ -46,8 +46,7 @@ class AtomicAssetOps {
 
   // signs the digest, the signature needs to be sent in the query
   sign({ web3Account }) {
-    // remove the initial "0x" from the signature
-    return web3Account.sign(this.digest()).signature.substring(2);
+    return remove0x(web3Account.sign(this.digest()).signature);
   }
 
   // Concats all commands, and returns the string
@@ -60,14 +59,14 @@ class AtomicAssetOps {
   }
 
   // Returns the full graphQL mutation
-  mutation({ web3Account }) {
+  mutation({ signature }) {
     const gqlOps = this.gqlOpsString();
 
     return `mutation {
     execute(
       input: {
         ops: [${gqlOps}],
-        signature: "${this.sign({ web3Account })}",
+        signature: "${remove0x(signature)}",
         universe: ${this.universe},
       }
     )
