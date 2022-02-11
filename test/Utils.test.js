@@ -2,6 +2,7 @@ const { assert } = require('chai');
 const {
   createAssetOp,
   updateAssetOp,
+  remove0x,
 } = require('../src/Utils');
 
 describe('create asset', () => {
@@ -65,5 +66,13 @@ describe('update asset', () => {
       },
     });
     assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{\\"key\\":{\\"key\\":{\\"key\\":\\"value\\"}}}","metadata":"\\"\\""}}');
+  });
+});
+
+describe('remove0x', () => {
+  it('removes when needed', () => {
+    assert.equal(remove0x('0x01abc'), '01abc');
+    assert.equal(remove0x('x01abc'), 'x01abc');
+    assert.equal(remove0x('01abc'), '01abc');
   });
 });
