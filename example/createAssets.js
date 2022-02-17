@@ -5,7 +5,7 @@
 const program = require('commander');
 const Accounts = require('web3-eth-accounts');
 const fetch = require('isomorphic-fetch');
-const { createAsset } = require('../src/Utils');
+const { createAssetOp } = require('../src/Utils');
 const { AtomicAssetOps } = require('../src/AtomicAssetOps');
 
 program
@@ -48,16 +48,17 @@ async function getUserServerNonce(freeverseId, id) {
     }),
   });
   const result = await response.json();
-  return result.data.usersUniverseByUserIdAndUniverseId.nonce;
+  const nonce = result.data.usersUniverseByUserIdAndUniverseId ? result.data.usersUniverseByUserIdAndUniverseId.nonce : 0;
+  return nonce;
 }
 
 (async () => {
   const nonce = await getUserServerNonce(account.address, universe);
 
-  const assetOps = new AtomicAssetOps({ universeId: 0 });
+  const assetOps = new AtomicAssetOps({ universeId: universe });
   for (let i = 0; i < number; i += 1) {
     assetOps.push({
-      op: createAsset({
+      op: createAssetOp({
         nonce: nonce + i,
         ownerId: account.address,
         metadata: {},
