@@ -48,7 +48,8 @@ async function getUserServerNonce(freeverseId, id) {
     }),
   });
   const result = await response.json();
-  const nonce = result.data.usersUniverseByUserIdAndUniverseId ? result.data.usersUniverseByUserIdAndUniverseId.nonce : 0;
+  const nonce = result.data.usersUniverseByUserIdAndUniverseId
+    ? result.data.usersUniverseByUserIdAndUniverseId.nonce : 0;
   return nonce;
 }
 
