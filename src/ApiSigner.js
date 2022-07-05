@@ -53,6 +53,13 @@ function signDropPriority({ web3Account, assetId, priority }) {
   return digestSignature;
 }
 
+function signCreateCollection({ web3account, name }) {
+  const digest = concatHash(['string'], [name]);
+  const digestSignature = web3account.sign(digest);
+  return digestSignature;
+}
+
+
 // Returns the two main strings (ops and signature)
 // to be used as inputs to Create Asset GraphQL mutation
 // This function will be deprecated in future releases,
@@ -138,6 +145,7 @@ function createAssetMutationInputs(
 module.exports = {
   signImageUpload,
   signListImages,
+  signCreateCollection,
   createAssetMutationInputs,
   updateAssetMutationInputs,
   signDropPriority,
