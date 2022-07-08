@@ -7,6 +7,8 @@ const {
   createAssetMutationInputs,
   updateAssetMutationInputs,
   signDropPriority,
+  signCreateCollection,
+  signUpdateCollection,
 } = require('../src/ApiSigner');
 const {
   signExecuteMutation,
@@ -99,6 +101,30 @@ it('signDropPriority', () => {
     web3Account: universeOwnerAccount,
     assetId: '269599466671506397947685068811903227002082778120854472900238839975913',
     priority: 42,
+  });
+  assert.equal(sig.signature, expected);
+});
+
+it(' should create signature for CreateCollection', () => {
+  const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
+  const expected = '0x021df465203ec7dbf6fd6c271c52e7b98ae0ceb3874edc37ae3c1d69605d4aa3250c99d88cc3eb8464dcfef99c209fdcce9e3523bbef26ca36b1dea261f302731b';
+  const sig = signCreateCollection({
+    web3Account: universeOwnerAccount,
+    name: 'Test 123',
+    universeId: 0,
+  });
+  assert.equal(sig.signature, expected);
+});
+it(' should create signature for UpdateCollection', () => {
+  const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
+  const expected = '0x6b1452cc5db1e0fcbfba6de23d9697afdfc04f9af8ec308cf4b6c4de19333b392737d7988d62d2d6a39657aadef47cc170ddd8e569be70d99b0a2e99e0ab190a1c';
+  const sig = signUpdateCollection({
+    web3Account: universeOwnerAccount,
+    name: 'Test 1234',
+    universeId: 0,
+    id: 2,
+    description: 'description',
+    imageUrl: '',
   });
   assert.equal(sig.signature, expected);
 });
