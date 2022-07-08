@@ -4,6 +4,8 @@ const {
   createAssetMutationInputs,
   updateAssetMutationInputs,
   signDropPriority,
+  signCreateCollection,
+  signUpdateCollection,
 } = require('./ApiSigner');
 
 const {
@@ -21,5 +23,7 @@ module.exports = {
   signDropPriority,
   createAssetOp,
   updateAssetOp,
+  signCreateCollection,
+  signUpdateCollection,
   AtomicAssetOps,
 };
