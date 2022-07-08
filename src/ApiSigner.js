@@ -53,20 +53,26 @@ function signDropPriority({ web3Account, assetId, priority }) {
   return digestSignature;
 }
 
-function signCreateCollection({ web3Account, name, universeId }) {
-  const digest = concatHash(['string', 'uint32'], [name, universeId]);
+// Returns the signature needed to create a collection in a given universe
+// The provided collectionId must increment the previous existing one by +1
+// New collections start with nonce = 0
+function signCreateCollection({ web3Account, universeId, collectionId }) {
+  const digest = concatHash(['uint32', 'uint32'], [universeId, collectionId]);
   const digestSignature = web3Account.sign(digest);
   return digestSignature;
 }
 
+// Returns the signature needed to update an existing collection.
+// The provided nonce must increment the previous existing one by +1
+// New collections start with nonce = 0
 function signUpdateCollection(
   {
-    web3Account, name, universeId, id, description, imageUrl,
+    web3Account, universeId, collectionId, name, description, imageUrl, nonce,
   },
 ) {
   const digest = concatHash(
-    ['string', 'uint32', 'uint32', 'string', 'string'],
-    [name, universeId, id, description, imageUrl],
+    ['uint32', 'uint32', 'string', 'string', 'string', 'uint32'],
+    [universeId, collectionId, name, description, imageUrl, nonce],
   );
   const digestSignature = web3Account.sign(digest);
   return digestSignature;

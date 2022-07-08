@@ -107,24 +107,26 @@ it('signDropPriority', () => {
 
 it(' should create signature for CreateCollection', () => {
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
-  const expected = '0x021df465203ec7dbf6fd6c271c52e7b98ae0ceb3874edc37ae3c1d69605d4aa3250c99d88cc3eb8464dcfef99c209fdcce9e3523bbef26ca36b1dea261f302731b';
+  const expected = '0xaa962dd18976c6ad786de97e063d46a4151848157c060364094f840e9dab5f2912bdf15827c62b7b26574e9510dd511cb27b49a86dc82b559b1e177df063263c1c';
   const sig = signCreateCollection({
     web3Account: universeOwnerAccount,
-    name: 'Test 123',
     universeId: 0,
+    collectionId: 1,
   });
   assert.equal(sig.signature, expected);
 });
+
 it(' should create signature for UpdateCollection', () => {
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
-  const expected = '0x6b1452cc5db1e0fcbfba6de23d9697afdfc04f9af8ec308cf4b6c4de19333b392737d7988d62d2d6a39657aadef47cc170ddd8e569be70d99b0a2e99e0ab190a1c';
+  const expected = '0x228728852b54eee075159b11340d7dae41c2eb927526ed045ebd9d2f3d33ba451e136424986ad7707f82dafb5b48e993c3e3044cd8e0edad2f00ab80f46c93ef1b';
   const sig = signUpdateCollection({
     web3Account: universeOwnerAccount,
     name: 'Test 1234',
     universeId: 0,
-    id: 2,
+    collectionId: 2,
     description: 'description',
     imageUrl: '',
+    nonce: 1,
   });
   assert.equal(sig.signature, expected);
 });
