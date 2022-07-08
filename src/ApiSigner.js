@@ -26,56 +26,46 @@ const {
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
 
-// Creates the digest to upload an image and returns the signature of the digest.
-function signImageUpload({ web3Account, fileHash, universeIdx }) {
-  const digest = concatHash(
+// Returns the digest to be signed to upload an image
+function digestImageUpload({ fileHash, universeIdx }) {
+  return concatHash(
     ['string', 'uint32'],
     [fileHash, universeIdx],
   );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
 }
 
-// Creates the digest to query the list of available images in a universe,
-// and returns the signature of the digest.
-function signListImages({ web3Account, universeIdx }) {
-  const digest = concatHash(['uint32'], [universeIdx]);
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
+// Returns the digest to be signed to query the list of available images in a universe
+function digestListImages({ universeIdx }) {
+  return concatHash(['uint32'], [universeIdx]);
 }
 
-function signDropPriority({ web3Account, assetId, priority }) {
-  const digest = concatHash(
+// Returns the digest to be signed to set the drop priority of an asset in a universe
+function digestDropPriority({ assetId, priority }) {
+  return concatHash(
     ['uint32', 'string'],
     [priority, assetId],
   );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
 }
 
-// Returns the signature needed to create a collection in a given universe
+// Returns the digest to be signed to create a collection in a given universe
 // The provided collectionId must increment the previous existing one by +1
 // New collections start with nonce = 0
-function signCreateCollection({ web3Account, universeId, collectionId }) {
-  const digest = concatHash(['uint32', 'uint32'], [universeId, collectionId]);
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
+function digestCreateCollection({ universeId, collectionId }) {
+  return concatHash(['uint32', 'uint32'], [universeId, collectionId]);
 }
 
-// Returns the signature needed to update an existing collection.
+// Returns the digest to be signed to update an existing collection.
 // The provided nonce must increment the previous existing one by +1
 // New collections start with nonce = 0
-function signUpdateCollection(
+function digestUpdateCollection(
   {
-    web3Account, universeId, collectionId, name, description, imageUrl, nonce,
+    universeId, collectionId, name, description, imageUrl, nonce,
   },
 ) {
-  const digest = concatHash(
+  return concatHash(
     ['uint32', 'uint32', 'string', 'string', 'string', 'uint32'],
     [universeId, collectionId, name, description, imageUrl, nonce],
   );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
 }
 
 // Returns the two main strings (ops and signature)
@@ -160,12 +150,19 @@ function createAssetMutationInputs(
   };
 }
 
+// Example of signing function
+// Any web3 compatible wallet/method can be used instead
+function sign({ digest, web3Account }) {
+  return web3Account.sign(digest).signature;
+}
+
 module.exports = {
-  signImageUpload,
-  signListImages,
-  signCreateCollection,
-  signUpdateCollection,
+  sign,
+  digestImageUpload,
+  digestListImages,
+  digestCreateCollection,
+  digestUpdateCollection,
+  digestDropPriority,
   createAssetMutationInputs,
   updateAssetMutationInputs,
-  signDropPriority,
 };
