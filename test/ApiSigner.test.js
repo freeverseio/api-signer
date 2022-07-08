@@ -2,13 +2,14 @@ const { assert } = require('chai');
 const Abi = require('web3-eth-abi');
 const Accounts = require('web3-eth-accounts');
 const {
-  signImageUpload,
-  signListImages,
+  sign,
+  digestImageUpload,
+  digestListImages,
   createAssetMutationInputs,
   updateAssetMutationInputs,
-  signDropPriority,
-  signCreateCollection,
-  signUpdateCollection,
+  digestDropPriority,
+  digestCreateCollection,
+  digestUpdateCollection,
 } = require('../src/ApiSigner');
 const {
   signExecuteMutation,
@@ -74,53 +75,67 @@ it('signExecuteMutation - opsStr = complex v2', () => {
   assert.equal(sig.signature, expected);
 });
 
-it('signImageUpload', () => {
+it('digestImageUpload', () => {
   const universeIdx = 0;
   const fileHash = '0a72a75bbe43c1a11aa589eed5e7dce0196ec434cb370ab0b688b2f9a5439a04';
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
+  const digest = digestImageUpload({ fileHash, universeIdx });
+  assert.equal(digest, '0x22bbf66bb1cb8cbb0e7b6e6a66a9e4d988fe40bbafa0e34baee557c7661ca6f3');
 
   const expected = '0x8377d29dfaad044ef631b37e712eba47ddf6fd992e502cfa51eef42611dc24e25c047b986a3f444ab8f22c4ad65754729c95f88836561fa072cf25bd776014c71c';
-  const sig = signImageUpload({ web3Account: universeOwnerAccount, fileHash, universeIdx });
-  assert.equal(sig.signature, expected);
+  assert.equal(
+    sign({ digest, web3Account: universeOwnerAccount }),
+    expected,
+  );
 });
 
-it('signListImages', () => {
+it('digestListImages', () => {
   const universeIdx = 0;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
+  const digest = digestListImages({ universeIdx });
+  assert.equal(digest, '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563');
 
   const expected = '0x722c33ad2cf10f5bd195c0504c9ae0ba91de07d779eacf34fa74d3f165b91c1e3ca505423a8c9d550d50ab9eb398d03b576232e43f69349bcc64b32baf1eb8161c';
-  const sig = signListImages({ web3Account: universeOwnerAccount, universeIdx });
-  assert.equal(sig.signature, expected);
+  assert.equal(
+    sign({ digest, web3Account: universeOwnerAccount }),
+    expected,
+  );
 });
 
-it('signDropPriority', () => {
+it('digestDropPriority', () => {
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
 
-  const expected = '0x676993a0064a55464a62f2a356433020b7e4eac1b47c86172b88e0a15433530e44c23ffbfec00df67bbbf57fe53e9c0c368cee9555617e6f1478c2c3ce32c1261b';
-  const sig = signDropPriority({
-    web3Account: universeOwnerAccount,
+  const digest = digestDropPriority({
     assetId: '269599466671506397947685068811903227002082778120854472900238839975913',
     priority: 42,
   });
-  assert.equal(sig.signature, expected);
+  assert.equal(digest, '0x2c8dda1178a8b32bde1632d7ece5542fda1dc38d5662beaff5a72f26618e097f');
+
+  const expected = '0x676993a0064a55464a62f2a356433020b7e4eac1b47c86172b88e0a15433530e44c23ffbfec00df67bbbf57fe53e9c0c368cee9555617e6f1478c2c3ce32c1261b';
+  assert.equal(
+    sign({ digest, web3Account: universeOwnerAccount }),
+    expected,
+  );
 });
 
 it(' should create signature for CreateCollection', () => {
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
-  const expected = '0xaa962dd18976c6ad786de97e063d46a4151848157c060364094f840e9dab5f2912bdf15827c62b7b26574e9510dd511cb27b49a86dc82b559b1e177df063263c1c';
-  const sig = signCreateCollection({
-    web3Account: universeOwnerAccount,
+  const digest = digestCreateCollection({
     universeId: 0,
     collectionId: 1,
   });
-  assert.equal(sig.signature, expected);
+  assert.equal(digest, '0xa6eef7e35abe7026729641147f7915573c7e97b47efa546f5f6e3230263bcb49');
+
+  const expected = '0xaa962dd18976c6ad786de97e063d46a4151848157c060364094f840e9dab5f2912bdf15827c62b7b26574e9510dd511cb27b49a86dc82b559b1e177df063263c1c';
+  assert.equal(
+    sign({ digest, web3Account: universeOwnerAccount }),
+    expected,
+  );
 });
 
 it(' should create signature for UpdateCollection', () => {
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
-  const expected = '0x228728852b54eee075159b11340d7dae41c2eb927526ed045ebd9d2f3d33ba451e136424986ad7707f82dafb5b48e993c3e3044cd8e0edad2f00ab80f46c93ef1b';
-  const sig = signUpdateCollection({
-    web3Account: universeOwnerAccount,
+  const digest = digestUpdateCollection({
     name: 'Test 1234',
     universeId: 0,
     collectionId: 2,
@@ -128,7 +143,13 @@ it(' should create signature for UpdateCollection', () => {
     imageUrl: '',
     nonce: 1,
   });
-  assert.equal(sig.signature, expected);
+  assert.equal(digest, '0x4c8b1e3c2a568bb7ae77a7b8ba71ca15a4e9c23295f5d0778c3b3851524175e7');
+
+  const expected = '0x228728852b54eee075159b11340d7dae41c2eb927526ed045ebd9d2f3d33ba451e136424986ad7707f82dafb5b48e993c3e3044cd8e0edad2f00ab80f46c93ef1b';
+  assert.equal(
+    sign({ digest, web3Account: universeOwnerAccount }),
+    expected,
+  );
 });
 
 it('createAssetMutationInputs', () => {
