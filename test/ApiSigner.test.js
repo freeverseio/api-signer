@@ -9,6 +9,7 @@ const {
   signDropPriority,
   signCreateCollection,
   signUpdateCollection,
+  receiptDigest,
 } = require('../src/ApiSigner');
 const {
   signExecuteMutation,
@@ -129,6 +130,37 @@ it(' should create signature for UpdateCollection', () => {
     nonce: 1,
   });
   assert.equal(sig.signature, expected);
+});
+
+it('should calculate the digest for receipt', () => {
+  const expected = '0xac640bc7f348edc0b7a2540b0ba5c0edd4f79bf6dce7df70922ec24ac3f01ea5';
+  const receipt = {
+    results: ['{"result":"success"}'],
+    ops: ['{}', '{2}'],
+    universeId: 1,
+    signature: '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c',
+    verse: 1,
+  };
+  const digest = receiptDigest({ receipt });
+  assert.equal(digest, expected);
+});
+
+it('should create signature for receipt', () => {
+  const relayerAccount = new Accounts().privateKeyToAccount('0x51897b64e85c3f714bba707e867914295a1377a7463a9dae8ea6a8b914246319');
+  const expectedAddress = '0xc1C634795835096143561aBE1AFbB3c31109a7BC';
+  assert.equal(relayerAccount.address, expectedAddress);
+  const expectedSig = '0x3aa5a1390e79668331eb92842168d88cdbd94a484a31c4b79fce60a377bbdacc4ce18b5376b72e87a64661cc98e51359b1f42e8ec5ccdff60274b6690b0211ec1c';
+  const receipt = {
+    results: ['{"result":"success"}'],
+    ops: ['{}', '{2}'],
+    universeId: 1,
+    signature: '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c',
+    verse: 1,
+  };
+  const digest = receiptDigest({ receipt });
+  const sig = relayerAccount.sign(digest);
+
+  assert.equal(sig.signature, expectedSig);
 });
 
 it('createAssetMutationInputs', () => {
