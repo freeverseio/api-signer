@@ -78,28 +78,27 @@ function signUpdateCollection(
   return digestSignature;
 }
 
-// Returns the digest of for the given receipt
-// recceipts have the following form:
+// Returns the digest of a receipt
+// receipts have the following form:
 // receipt = {
 //     results: []string    an array with the unique Ids of the assets created
 //     ops: []string        an array with the operations applied
 //     universe: uint32     the universe Id where the ops are applied
 //     signature: string    the signature provided as input to the query
-//     verse: uint32        the verse at which ops will be synchronized with the Layer 1 (= currentVerse + 1)
+//     verse: uint32        the verse at which ops will be synchronized with the Layer 1
 // }
-function receiptDigest(receipt) {
+function receiptDigest({ receipt }) {
   let resultsStr = '';
   receipt.results.forEach((result) => { resultsStr += result; });
   let opsStr = '';
   receipt.ops.forEach((op) => { opsStr += op; });
 
   const digest = concatHash(
-    ['string', 'string', 'uint32', 'string', 'uint32'], 
+    ['string', 'string', 'uint32', 'string', 'uint32'],
     [resultsStr, opsStr, receipt.universeId, receipt.signature, receipt.verse],
   );
   return digest;
 }
-
 
 // Returns the two main strings (ops and signature)
 // to be used as inputs to Create Asset GraphQL mutation
