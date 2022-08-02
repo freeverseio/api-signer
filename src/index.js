@@ -6,6 +6,7 @@ const {
   signDropPriority,
   signCreateCollection,
   signUpdateCollection,
+  receiptDigest,
 } = require('./ApiSigner');
 
 const {
@@ -25,5 +26,6 @@ module.exports = {
   updateAssetOp,
   signCreateCollection,
   signUpdateCollection,
+  receiptDigest,
   AtomicAssetOps,
 };
