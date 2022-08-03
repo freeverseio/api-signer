@@ -139,7 +139,7 @@ it('should calculate the digest for receipt', () => {
   const receipt = {
     results: ['{"result":"success"}'],
     ops: ['{}', '{2}'],
-    universeId: 1,
+    universe: 1,
     signature: '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c',
     verse: 1,
   };
@@ -155,7 +155,7 @@ it('should create signature for receipt', () => {
   const receipt = {
     results: ['{"result":"success"}'],
     ops: ['{}', '{2}'],
-    universeId: 1,
+    universe: 1,
     signature: '608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c',
     verse: 1,
   };
