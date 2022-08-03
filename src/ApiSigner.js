@@ -95,7 +95,7 @@ function receiptDigest({ receipt }) {
 
   const digest = concatHash(
     ['string', 'string', 'uint32', 'string', 'uint32'],
-    [resultsStr, opsStr, receipt.universeId, receipt.signature, receipt.verse],
+    [resultsStr, opsStr, receipt.universe, receipt.signature, receipt.verse],
   );
   return digest;
 }
