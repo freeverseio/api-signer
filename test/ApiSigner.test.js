@@ -1,6 +1,8 @@
 const { assert } = require('chai');
 const Abi = require('web3-eth-abi');
 const Accounts = require('web3-eth-accounts');
+const { ethers } = require('ethers');
+
 const {
   signImageUpload,
   signListImages,
@@ -161,6 +163,9 @@ it('should create signature for receipt', () => {
   const sig = relayerAccount.sign(digest);
 
   assert.equal(sig.signature, expectedSig);
+
+  const recoveredAddress = ethers.utils.verifyMessage(ethers.utils.arrayify(digest), sig);
+  assert.equal(recoveredAddress, expectedAddress);
 });
 
 it('createAssetMutationInputs', () => {
