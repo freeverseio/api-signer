@@ -16,7 +16,15 @@ function remove0x(str) {
 // Converts a JSON object to a string, cleans spaces and escapes required characters
 function jsonToCleanString(inputJSON) {
   let jsonString = JSON.stringify(inputJSON);
-  jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, '\\"');
+  if (!inputJSON) return jsonString.replace(/"/g, '\\"');
+
+  jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/\\\\/g, '\\\\\\').replace(/\\"/g, '\\\\\\"');
+  const matches = jsonString.match(/[^\\]"/g);
+  if (matches && matches.length) {
+    matches.forEach((match) => {
+      jsonString = jsonString.replace(match, `${match.charAt(0)}\\"`);
+    });
+  }
   return jsonString;
 }
 
@@ -54,4 +62,5 @@ module.exports = {
   concatHash,
   signExecuteMutation,
   remove0x,
+  jsonToCleanString,
 };
