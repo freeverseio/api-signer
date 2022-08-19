@@ -18,7 +18,7 @@ function jsonToCleanString(inputJSON) {
   let jsonString = JSON.stringify(inputJSON);
   if (!inputJSON) return jsonString.replace(/"/g, '\\"');
 
-  jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/\\"/g, '\\\\\\"');
+  jsonString = jsonString.replace(/(\r\n|\n|\r)/gm, '').replace(/\\\\/g, '\\\\\\').replace(/\\"/g, '\\\\\\"');
   const matches = jsonString.match(/[^\\]"/g);
   if (matches && matches.length) {
     matches.forEach((match) => {

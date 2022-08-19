@@ -264,6 +264,54 @@ it('createAssetMutationInputs with "', () => {
   assert.equal(signature, '1fbbec30d868da4245f53236851f8aaf66c76f7054551faf9c13d6ab958a74021a57e3bcc9f650c6a58508a25556addc12056ff0fc549fa6f99bc98e455420f91b');
 });
 
+it('createAssetMutationInputs with \\', () => {
+  // universe owner private key and corresponding account:
+  const universeOwnerPrivateKey = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
+  const universeOwnerAccount = new Accounts().privateKeyToAccount(universeOwnerPrivateKey);
+  // your universe id (obtained when signing up with Freeverse):
+  const universeIdx = 1;
+
+  // FreeverseID and nonce of user who will own this new asset:
+  // (the Nonce can be obtained via the query 'usersUniverseByUserIdAndUniverseId')
+  const ownerId = '0x8C146499db1685a522dE043d98092091dE2212DB';
+  const userNonce = 1;
+
+  // properties for asset
+  const propsJSON = {
+    name: 'Supercool Dragon\\',
+    description: 'Legendary creature that loves fire.\\',
+    image: 'ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz',
+    attributes: [
+      {
+        trait_type: 'Rarity\\',
+        value: 'Scarce\\',
+      },
+      {
+        trait_type: 'Level',
+        value: 5,
+      },
+      {
+        trait_type: 'Weight',
+        value: 123.5,
+      },
+    ],
+  };
+
+  const metadataJSON = {
+    userIDInMyServer: 21323543,
+  };
+  const { ops, signature } = createAssetMutationInputs({
+    universeOwnerAccount,
+    newAssetOwnerId: ownerId,
+    userNonce,
+    universeIdx,
+    propsJSON,
+    metadataJSON,
+  });
+  assert.equal(ops, '"{\\"type\\":\\"create_asset\\",\\"msg\\":{\\"nonce\\":1,\\"owner_id\\":\\"0x8C146499db1685a522dE043d98092091dE2212DB\\",\\"props\\":\\"{\\\\\\"name\\\\\\":\\\\\\"Supercool Dragon\\\\\\\\\\\\\\\\\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Legendary creature that loves fire.\\\\\\\\\\\\\\\\\\\\\\",\\\\\\"image\\\\\\":\\\\\\"ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz\\\\\\",\\\\\\"attributes\\\\\\":[{\\\\\\"trait_type\\\\\\":\\\\\\"Rarity\\\\\\\\\\\\\\\\\\\\\\",\\\\\\"value\\\\\\":\\\\\\"Scarce\\\\\\\\\\\\\\\\\\\\\\"},{\\\\\\"trait_type\\\\\\":\\\\\\"Level\\\\\\",\\\\\\"value\\\\\\":5},{\\\\\\"trait_type\\\\\\":\\\\\\"Weight\\\\\\",\\\\\\"value\\\\\\":123.5}]}\\",\\"metadata\\":\\"{\\\\\\"userIDInMyServer\\\\\\":21323543}\\"}}"');
+  assert.equal(signature, '9319b6c8a77fd4cc95e1a75f8926e35ac5a8906a75a806dc950c3811a5a256b667c3fa7e7492f217678b7eca63e22f88eca1df8934f3af4c0076e1dd82e3818f1c');
+});
+
 it('updateAssetMutationInputs', () => {
   // universe owner private key and corresponding account:
   const universeOwnerPrivateKey = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
@@ -359,4 +407,53 @@ it('updateAssetMutationInputs with "', () => {
 
   assert.equal(ops, '"{\\"type\\":\\"set_asset_props\\",\\"msg\\":{\\"nonce\\":3,\\"id\\":\\"90847538263667479732701940699204516337978725433575\\",\\"props\\":\\"{\\\\\\"name\\\\\\":\\\\\\"Supercool Dragon\\\\\\\\\\\\\\"\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Legendary creature that loves fire.\\\\\\\\\\\\\\"\\\\\\",\\\\\\"image\\\\\\":\\\\\\"ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz\\\\\\",\\\\\\"attributes\\\\\\":[{\\\\\\"trait_type\\\\\\":\\\\\\"Rarity\\\\\\\\\\\\\\"\\\\\\",\\\\\\"value\\\\\\":\\\\\\"Scarce\\\\\\\\\\\\\\"\\\\\\"},{\\\\\\"trait_type\\\\\\":\\\\\\"Level\\\\\\",\\\\\\"value\\\\\\":5},{\\\\\\"trait_type\\\\\\":\\\\\\"Weight\\\\\\",\\\\\\"value\\\\\\":123.5}]}\\",\\"metadata\\":\\"{\\\\\\"userIDInMyServer\\\\\\":21323543}\\"}}"');
   assert.equal(signature, '07d4b17d8e1213d61e34962ee134e3418192ac61122a05cb7e5b9d75a389c6560a9d5fa6f97ef987c9c9b50e95a23e4d8426dce23a598860016fc1b55a3a09c21c');
+});
+
+it('updateAssetMutationInputs with \\', () => {
+  // universe owner private key and corresponding account:
+  const universeOwnerPrivateKey = '0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54';
+  const universeOwnerAccount = new Accounts().privateKeyToAccount(universeOwnerPrivateKey);
+  // your universe id (obtained when signing up with Freeverse):
+  const universeIdx = 1;
+
+  // FreeverseID and nonce of user who will own this new asset:
+  // (the Nonce can be obtained via the query 'usersUniverseByUserIdAndUniverseId')
+  const assetId = '90847538263667479732701940699204516337978725433575';
+  const assetNonce = 3;
+
+  // updated properties for asset
+  const newPropsJSON = {
+    name: 'Supercool Dragon\\',
+    description: 'Legendary creature that loves fire.\\',
+    image: 'ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz',
+    attributes: [
+      {
+        trait_type: 'Rarity\\',
+        value: 'Scarce\\',
+      },
+      {
+        trait_type: 'Level',
+        value: 5,
+      },
+      {
+        trait_type: 'Weight',
+        value: 123.5,
+      },
+    ],
+  };
+
+  const metadataJSON = {
+    userIDInMyServer: 21323543,
+  };
+  const { ops, signature } = updateAssetMutationInputs({
+    universeOwnerAccount,
+    assetId,
+    assetNonce,
+    universeIdx,
+    propsJSON: newPropsJSON,
+    metadataJSON,
+  });
+
+  assert.equal(ops, '"{\\"type\\":\\"set_asset_props\\",\\"msg\\":{\\"nonce\\":3,\\"id\\":\\"90847538263667479732701940699204516337978725433575\\",\\"props\\":\\"{\\\\\\"name\\\\\\":\\\\\\"Supercool Dragon\\\\\\\\\\\\\\\\\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Legendary creature that loves fire.\\\\\\\\\\\\\\\\\\\\\\",\\\\\\"image\\\\\\":\\\\\\"ipfs://QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz\\\\\\",\\\\\\"attributes\\\\\\":[{\\\\\\"trait_type\\\\\\":\\\\\\"Rarity\\\\\\\\\\\\\\\\\\\\\\",\\\\\\"value\\\\\\":\\\\\\"Scarce\\\\\\\\\\\\\\\\\\\\\\"},{\\\\\\"trait_type\\\\\\":\\\\\\"Level\\\\\\",\\\\\\"value\\\\\\":5},{\\\\\\"trait_type\\\\\\":\\\\\\"Weight\\\\\\",\\\\\\"value\\\\\\":123.5}]}\\",\\"metadata\\":\\"{\\\\\\"userIDInMyServer\\\\\\":21323543}\\"}}"');
+  assert.equal(signature, '5675b5bf884e5356a9a4bf6ee2c26b452256957f419a77f1c29f1d9f5d2a701a7cbdc8b9378924a92aa8f0aa4142fff448a042baf52b3a7fc72346977aea137c1c');
 });

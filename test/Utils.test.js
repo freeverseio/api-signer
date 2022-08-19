@@ -34,6 +34,15 @@ describe('create asset', () => {
     });
     assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{\\"key\\":\\"value\\\\\\"\\"}","metadata":"\\"\\""}}');
   });
+  it('props json object values have \\', () => {
+    const op = createAssetOp({
+      nonce: 0,
+      ownerId: '',
+      metadata: '',
+      props: { key: 'value\\' },
+    });
+    assert.equal(op, '{"type":"create_asset","msg":{"nonce":0,"owner_id":"","props":"{\\"key\\":\\"value\\\\\\\\\\"}","metadata":"\\"\\""}}');
+  });
   it('props is nested struct', () => {
     const op = createAssetOp({
       nonce: 0,
@@ -75,6 +84,15 @@ describe('update asset', () => {
     });
     assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{\\"key\\":\\"value\\\\\\"\\"}","metadata":"\\"\\""}}');
   });
+  it('props json object values have \\', () => {
+    const op = updateAssetOp({
+      nonce: 0,
+      assetId: '',
+      metadata: '',
+      props: { key: 'value\\' },
+    });
+    assert.equal(op, '{"type":"set_asset_props","msg":{"nonce":0,"id":"","props":"{\\"key\\":\\"value\\\\\\\\\\"}","metadata":"\\"\\""}}');
+  });
   it('props is nested struct', () => {
     const op = updateAssetOp({
       nonce: 0,
@@ -106,5 +124,15 @@ describe('jsonToCleanString', () => {
     const json = { key: 'value"', key2: 'value2"' };
     const cleanString = jsonToCleanString(json);
     assert.equal(cleanString, '{\\"key\\":\\"value\\\\\\"\\",\\"key2\\":\\"value2\\\\\\"\\"}');
+  });
+  it('works with \\', () => {
+    const json = { key: 'value\\' };
+    const cleanString = jsonToCleanString(json);
+    assert.equal(cleanString, '{\\"key\\":\\"value\\\\\\\\\\"}');
+  });
+  it('works with 2 \\', () => {
+    const json = { key: 'value\\', key2: 'value2\\' };
+    const cleanString = jsonToCleanString(json);
+    assert.equal(cleanString, '{\\"key\\":\\"value\\\\\\\\\\",\\"key2\\":\\"value2\\\\\\\\\\"}');
   });
 });
