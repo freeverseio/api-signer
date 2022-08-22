@@ -1,6 +1,6 @@
 {
     "name": "freeverse-apisigner-js",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "main": "src/index.js",
     "description": "Library for creating and managing Living Assets",
     "homepage": "https://www.freeverse.io/",
