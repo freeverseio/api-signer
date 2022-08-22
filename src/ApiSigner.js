@@ -21,7 +21,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const {
-  createAssetOp, updateAssetOp, concatHash,
+  createAssetOp, updateAssetOp, concatHash, createAssetOpForCollection,
 } = require('./Utils');
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
@@ -182,6 +182,36 @@ function createAssetMutationInputs(
   };
 }
 
+function createAssetsForCollectionMutationInputs({
+  universeOwnerAccount,
+  newAssetOwnerId,
+  userNonce, universeIdx,
+  propsJSON,
+  metadataJSON,
+  collectionId,
+  numAssets,
+}) {
+  const opsString = createAssetOpForCollection({
+    nonce: userNonce,
+    ownerId: newAssetOwnerId,
+    metadata: metadataJSON,
+    props: propsJSON,
+    collectionId,
+    numAssets,
+  });
+
+  const tx = new AtomicAssetOps({ universeId: universeIdx });
+  tx.push({ op: opsString });
+
+  const sigString = tx.sign({ web3Account: universeOwnerAccount });
+
+  const gqlOpsString = tx.gqlOpsString();
+  return {
+    ops: gqlOpsString,
+    signature: sigString,
+  };
+}
+
 module.exports = {
   signImageUpload,
   signListImages,
@@ -189,6 +219,7 @@ module.exports = {
   signUpdateCollection,
   receiptDigest,
   createAssetMutationInputs,
+  createAssetsForCollectionMutationInputs,
   updateAssetMutationInputs,
   signDropPriority,
 };
