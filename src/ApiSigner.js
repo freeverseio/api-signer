@@ -21,7 +21,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const {
-  createAssetOp, updateAssetOp, concatHash,
+  createAssetOp, updateAssetOp, concatHash, createAssetOpForCollection,
 } = require('./Utils');
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
@@ -72,47 +72,6 @@ function digestUpdateCollection(
 // to be used as inputs to Create Asset GraphQL mutation
 // This function will be deprecated in future releases,
 // please use the AtomicAssetOps class instead.
-function updateAssetMutationInputs(
-  {
-    universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
-  },
-) {
-  /** *
-    * This is the string that will be signed by the universe owner,
-    * and registered with the underlying blockchain
-    * `{
-    *   "type":"set_asset_props",
-    *   "msg":{
-    *       "nonce":<assetNonce>,
-    *       "id": "<assetId>",
-    *       "props":"<updatedAssetProperties>",
-    *       "metadata": "<assetMetadata>"
-    *   }
-    * }`
-    */
-  const opsString = updateAssetOp({
-    nonce: assetNonce, assetId, metadata: metadataJSON, props: propsJSON,
-  });
-
-  // sign the operations string using the Eth universe owner account
-  const tx = new AtomicAssetOps({ universeId: universeIdx });
-  tx.push({ op: opsString });
-
-  const sigString = tx.sign({ web3Account: universeOwnerAccount });
-
-  // add more escape characters to embed the ops string into the query
-  // this is necessary for correct graphQL parsing
-  const gqlOpsString = tx.gqlOpsString();
-  return {
-    ops: gqlOpsString,
-    signature: sigString,
-  };
-}
-
-// Returns the two main strings (ops and signature)
-// to be used as inputs to Create Asset GraphQL mutation
-// This function will be deprecated in future releases,
-// please use the AtomicAssetOps class instead.
 function createAssetMutationInputs(
   {
     universeOwnerAccount, newAssetOwnerId, userNonce, universeIdx, propsJSON, metadataJSON,
@@ -150,6 +109,99 @@ function createAssetMutationInputs(
   };
 }
 
+function createAssetsForCollectionMutationInputs({
+  universeOwnerAccount,
+  newAssetOwnerId,
+  userNonce, universeIdx,
+  propsJSON,
+  metadataJSON,
+  collectionId,
+  numAssets,
+}) {
+  const opsString = createAssetOpForCollection({
+    nonce: userNonce,
+    ownerId: newAssetOwnerId,
+    metadata: metadataJSON,
+    props: propsJSON,
+    collectionId,
+    numAssets,
+  });
+
+  const tx = new AtomicAssetOps({ universeId: universeIdx });
+  tx.push({ op: opsString });
+
+  const sigString = tx.sign({ web3Account: universeOwnerAccount });
+
+  const gqlOpsString = tx.gqlOpsString();
+  return {
+    ops: gqlOpsString,
+    signature: sigString,
+  };
+}
+
+// Returns the two main strings (ops and signature)
+// to be used as inputs to Create Asset GraphQL mutation
+// This function will be deprecated in future releases,
+// please use the AtomicAssetOps class instead.
+function updateAssetMutationInputs(
+  {
+    universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
+  },
+) {
+  /** *
+    * This is the string that will be signed by the universe owner,
+    * and registered with the underlying blockchain
+    * `{
+    *   "type":"set_asset_props",
+    *   "msg":{
+    *       "nonce":<assetNonce>,
+    *       "id": "<assetId>",
+    *       "props":"<updatedAssetProperties>",
+    *       "metadata": "<assetMetadata>"
+    *   }
+    * }`
+    */
+  const opsString = updateAssetOp({
+    nonce: assetNonce, assetId, metadata: metadataJSON, props: propsJSON,
+  });
+
+  // sign the operations string using the Eth universe owner account
+  const tx = new AtomicAssetOps({ universeId: universeIdx });
+  tx.push({ op: opsString });
+
+  const sigString = tx.sign({ web3Account: universeOwnerAccount });
+
+  // add more escape characters to embed the ops string into the query
+  // this is necessary for correct graphQL parsing
+  const gqlOpsString = tx.gqlOpsString();
+  return {
+    ops: gqlOpsString,
+    signature: sigString,
+  };
+}
+
+// Returns the digest of a receipt
+// receipts have the following form:
+// receipt = {
+//     results: []string    an array with the unique Ids of the assets created
+//     ops: []string        an array with the operations applied
+//     universe: uint32     the universe Id where the ops are applied
+//     signature: string    the signature provided as input to the query
+//     verse: uint32        the verse at which ops will be synchronized with the Layer 1
+// }
+function receiptDigest({ receipt }) {
+  let resultsStr = '';
+  receipt.results.forEach((result) => { resultsStr += result; });
+  let opsStr = '';
+  receipt.ops.forEach((op) => { opsStr += op; });
+
+  const digest = concatHash(
+    ['string', 'string', 'uint32', 'string', 'uint32'],
+    [resultsStr, opsStr, receipt.universe, receipt.signature, receipt.verse],
+  );
+  return digest;
+}
+
 // Example of signing function
 // Any web3 compatible wallet/method can be used instead
 function sign({ digest, web3Account }) {
@@ -163,6 +215,8 @@ module.exports = {
   digestCreateCollection,
   digestUpdateCollection,
   digestDropPriority,
+  receiptDigest,
   createAssetMutationInputs,
+  createAssetsForCollectionMutationInputs,
   updateAssetMutationInputs,
 };

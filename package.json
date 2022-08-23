@@ -1,6 +1,6 @@
 {
     "name": "freeverse-apisigner-js",
-    "version": "1.0.9",
+    "version": "1.2.1",
     "main": "src/index.js",
     "description": "Library for creating and managing Living Assets",
     "homepage": "https://www.freeverse.io/",
@@ -19,13 +19,14 @@
         "test": "./node_modules/.bin/mocha && npx eslint ."
     },
     "devDependencies": {
-        "commander": "^9.0.0",
-        "isomorphic-fetch": "^3.0.0",
-        "web3-eth-accounts": "^1.5.2",
         "chai": "^4.3.4",
+        "commander": "^9.0.0",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.24.2",
-        "mocha": "^9.1.1"
+        "ethers": "^5.6.9",
+        "isomorphic-fetch": "^3.0.0",
+        "mocha": "^9.1.1",
+        "web3-eth-accounts": "^1.5.2"
     }
 }
