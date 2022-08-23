@@ -47,6 +47,11 @@ function digestDropPriority({ assetId, priority }) {
   );
 }
 
+// Returns the digest to be signed of a set of operations.
+function digestMutationOperations({ universeIdx, opsStr }) {
+  return concatHash(['uint32', 'string'], [universeIdx, opsStr]);
+}
+
 // Returns the digest to be signed to create a collection in a given universe
 // The provided collectionId must increment the previous existing one by +1
 // New collections start with nonce = 0
@@ -215,6 +220,7 @@ module.exports = {
   digestCreateCollection,
   digestUpdateCollection,
   digestDropPriority,
+  digestMutationOperations,
   receiptDigest,
   createAssetMutationInputs,
   createAssetsForCollectionMutationInputs,

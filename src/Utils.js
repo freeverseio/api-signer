@@ -63,20 +63,12 @@ const createAssetOpForCollection = ({
   props,
 )}","metadata":"${jsonToCleanString(metadata)}"}}`;
 
-// Returns the signature of the digest of a set of operations.
-function signExecuteMutation({ web3Account, universeIdx, opsStr }) {
-  const digest = concatHash(['uint32', 'string'], [universeIdx, opsStr]);
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
-}
-
 module.exports = {
   createAssetOp,
   updateAssetOp,
   createAssetOpForCollection,
   cleanOpsStringForGQL,
   concatHash,
-  signExecuteMutation,
   remove0x,
   jsonToCleanString,
 };

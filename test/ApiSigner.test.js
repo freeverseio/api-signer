@@ -14,10 +14,8 @@ const {
   createAssetMutationInputs,
   updateAssetMutationInputs,
   createAssetsForCollectionMutationInputs,
+  digestMutationOperations,
 } = require('../src/ApiSigner');
-const {
-  signExecuteMutation,
-} = require('../src/Utils');
 
 it('encoding as strings using web3 library', () => {
   assert.equal(Abi.encodeParameters(['string'], ['']), '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000');
@@ -30,8 +28,8 @@ it('signExecuteMutation - opsStr = empty', () => {
   const universeIdx = 0;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
   const expected = '0x07a077de7b4dc56c5e8a686b081c269ee71da3bdd148e67f3be3f146b46617b54248c0ca51a4b9def97de763d28ad61736ef100bd8f03a0bac22e22ac74660241c';
-  const sig = signExecuteMutation({ web3Account: universeOwnerAccount, universeIdx, opsStr });
-  assert.equal(sig.signature, expected);
+  const digest = digestMutationOperations({ universeIdx, opsStr });
+  assert.equal(sign({ digest, web3Account: universeOwnerAccount }), expected);
 });
 
 it('signExecuteMutation - opsStr = {}', () => {
@@ -39,8 +37,8 @@ it('signExecuteMutation - opsStr = {}', () => {
   const universeIdx = 0;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
   const expected = '0x718ffe55edcc824d5ecb3dcf4c7b2eab70ac72100bfb7a9e9777da0af1f0bfe401d373451e5d843632bc785d711a7b3c6c67ae24c69d7ac7d12e884c536a288b1c';
-  const sig = signExecuteMutation({ web3Account: universeOwnerAccount, universeIdx, opsStr });
-  assert.equal(sig.signature, expected);
+  const digest = digestMutationOperations({ universeIdx, opsStr });
+  assert.equal(sign({ digest, web3Account: universeOwnerAccount }), expected);
 });
 
 it('signExecuteMutation - opsStr = {} - universe = 1', () => {
@@ -48,8 +46,8 @@ it('signExecuteMutation - opsStr = {} - universe = 1', () => {
   const universeIdx = 1;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
   const expected = '0xa79f585886a011d2516083ed5b9b3af060ea4b637c0948d28ce9c80646ecbaa6615d8e6615679cf3510fbe0aa5e89cf5b45e2444076492b8a9a007f87271d8d71b';
-  const sig = signExecuteMutation({ web3Account: universeOwnerAccount, universeIdx, opsStr });
-  assert.equal(sig.signature, expected);
+  const digest = digestMutationOperations({ universeIdx, opsStr });
+  assert.equal(sign({ digest, web3Account: universeOwnerAccount }), expected);
 });
 
 it('signExecuteMutation - opsStr = {}{2}', () => {
@@ -57,8 +55,8 @@ it('signExecuteMutation - opsStr = {}{2}', () => {
   const universeIdx = 1;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
   const expected = '0x608f77d5e99d9ef47100532001d59da5e755aef402a9c939f265f98a01603fd57f6aa7b51b41eee1e3fe16862bbb822f4d80a982f077274d78967a652254f5391c';
-  const sig = signExecuteMutation({ web3Account: universeOwnerAccount, universeIdx, opsStr });
-  assert.equal(sig.signature, expected);
+  const digest = digestMutationOperations({ universeIdx, opsStr });
+  assert.equal(sign({ digest, web3Account: universeOwnerAccount }), expected);
 });
 
 it('signExecuteMutation - opsStr = complex', () => {
@@ -66,8 +64,8 @@ it('signExecuteMutation - opsStr = complex', () => {
   const universeIdx = 0;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
   const expected = '0xd59137c200af36586f311d2508e06ec3179fe3bff0f7d66b21b9bd7c9cb518976d9cf3edd142a2dce924eb627e1821202ad6a8eaca9f22164f6a4e4bb4a62b571b';
-  const sig = signExecuteMutation({ web3Account: universeOwnerAccount, universeIdx, opsStr });
-  assert.equal(sig.signature, expected);
+  const digest = digestMutationOperations({ universeIdx, opsStr });
+  assert.equal(sign({ digest, web3Account: universeOwnerAccount }), expected);
 });
 
 it('signExecuteMutation - opsStr = complex v2', () => {
@@ -75,8 +73,8 @@ it('signExecuteMutation - opsStr = complex v2', () => {
   const universeIdx = 0;
   const universeOwnerAccount = new Accounts().privateKeyToAccount('0x3B878F7892FBBFA30C8AED1DF317C19B853685E707C2CF0EE1927DC516060A54');
   const expected = '0x340960b6aaec852054adafc76f9efeed8ebca0c67790dc3c85856db300590ba9478a4d46bb3c3ed08ae043c8bef613f003fda13130452b2ee27e72ba12bc16151b';
-  const sig = signExecuteMutation({ web3Account: universeOwnerAccount, universeIdx, opsStr });
-  assert.equal(sig.signature, expected);
+  const digest = digestMutationOperations({ universeIdx, opsStr });
+  assert.equal(sign({ digest, web3Account: universeOwnerAccount }), expected);
 });
 
 it('digestImageUpload', () => {
