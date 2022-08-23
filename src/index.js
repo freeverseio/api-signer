@@ -1,12 +1,15 @@
 const {
-  signImageUpload,
-  signListImages,
-  createAssetMutationInputs,
-  updateAssetMutationInputs,
-  signDropPriority,
-  signCreateCollection,
-  signUpdateCollection,
+  sign,
+  digestImageUpload,
+  digestListImages,
+  digestCreateCollection,
+  digestUpdateCollection,
+  digestDropPriority,
+  digestMutationOperations,
   receiptDigest,
+  createAssetMutationInputs,
+  createAssetsForCollectionMutationInputs,
+  updateAssetMutationInputs,
 } = require('./ApiSigner');
 
 const {
@@ -17,15 +20,18 @@ const {
 const { AtomicAssetOps } = require('./AtomicAssetOps');
 
 module.exports = {
-  signImageUpload,
-  signListImages,
+  sign,
+  digestImageUpload,
+  digestListImages,
+  digestCreateCollection,
+  digestUpdateCollection,
+  digestDropPriority,
+  digestMutationOperations,
+  receiptDigest,
   createAssetMutationInputs,
+  createAssetsForCollectionMutationInputs,
   updateAssetMutationInputs,
-  signDropPriority,
   createAssetOp,
   updateAssetOp,
-  signCreateCollection,
-  signUpdateCollection,
-  receiptDigest,
   AtomicAssetOps,
 };

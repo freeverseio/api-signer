@@ -26,119 +26,51 @@ const {
 
 const { AtomicAssetOps } = require('./AtomicAssetOps');
 
-// Creates the digest to upload an image and returns the signature of the digest.
-function signImageUpload({ web3Account, fileHash, universeIdx }) {
-  const digest = concatHash(
+// Returns the digest to be signed to upload an image
+function digestImageUpload({ fileHash, universeIdx }) {
+  return concatHash(
     ['string', 'uint32'],
     [fileHash, universeIdx],
   );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
 }
 
-// Creates the digest to query the list of available images in a universe,
-// and returns the signature of the digest.
-function signListImages({ web3Account, universeIdx }) {
-  const digest = concatHash(['uint32'], [universeIdx]);
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
+// Returns the digest to be signed to query the list of available images in a universe
+function digestListImages({ universeIdx }) {
+  return concatHash(['uint32'], [universeIdx]);
 }
 
-function signDropPriority({ web3Account, assetId, priority }) {
-  const digest = concatHash(
+// Returns the digest to be signed to set the drop priority of an asset in a universe
+function digestDropPriority({ assetId, priority }) {
+  return concatHash(
     ['uint32', 'string'],
     [priority, assetId],
   );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
 }
 
-// Returns the signature needed to create a collection in a given universe
+// Returns the digest to be signed of a set of operations.
+function digestMutationOperations({ universeIdx, opsStr }) {
+  return concatHash(['uint32', 'string'], [universeIdx, opsStr]);
+}
+
+// Returns the digest to be signed to create a collection in a given universe
 // The provided collectionId must increment the previous existing one by +1
 // New collections start with nonce = 0
-function signCreateCollection({ web3Account, universeId, collectionId }) {
-  const digest = concatHash(['uint32', 'uint32'], [universeId, collectionId]);
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
+function digestCreateCollection({ universeId, collectionId }) {
+  return concatHash(['uint32', 'uint32'], [universeId, collectionId]);
 }
 
-// Returns the signature needed to update an existing collection.
+// Returns the digest to be signed to update an existing collection.
 // The provided nonce must increment the previous existing one by +1
 // New collections start with nonce = 0
-function signUpdateCollection(
+function digestUpdateCollection(
   {
-    web3Account, universeId, collectionId, name, description, imageUrl, nonce,
+    universeId, collectionId, name, description, imageUrl, nonce,
   },
 ) {
-  const digest = concatHash(
+  return concatHash(
     ['uint32', 'uint32', 'string', 'string', 'string', 'uint32'],
     [universeId, collectionId, name, description, imageUrl, nonce],
   );
-  const digestSignature = web3Account.sign(digest);
-  return digestSignature;
-}
-
-// Returns the digest of a receipt
-// receipts have the following form:
-// receipt = {
-//     results: []string    an array with the unique Ids of the assets created
-//     ops: []string        an array with the operations applied
-//     universe: uint32     the universe Id where the ops are applied
-//     signature: string    the signature provided as input to the query
-//     verse: uint32        the verse at which ops will be synchronized with the Layer 1
-// }
-function receiptDigest({ receipt }) {
-  let resultsStr = '';
-  receipt.results.forEach((result) => { resultsStr += result; });
-  let opsStr = '';
-  receipt.ops.forEach((op) => { opsStr += op; });
-
-  const digest = concatHash(
-    ['string', 'string', 'uint32', 'string', 'uint32'],
-    [resultsStr, opsStr, receipt.universe, receipt.signature, receipt.verse],
-  );
-  return digest;
-}
-
-// Returns the two main strings (ops and signature)
-// to be used as inputs to Create Asset GraphQL mutation
-// This function will be deprecated in future releases,
-// please use the AtomicAssetOps class instead.
-function updateAssetMutationInputs(
-  {
-    universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
-  },
-) {
-  /** *
-    * This is the string that will be signed by the universe owner,
-    * and registered with the underlying blockchain
-    * `{
-    *   "type":"set_asset_props",
-    *   "msg":{
-    *       "nonce":<assetNonce>,
-    *       "id": "<assetId>",
-    *       "props":"<updatedAssetProperties>",
-    *       "metadata": "<assetMetadata>"
-    *   }
-    * }`
-    */
-  const opsString = updateAssetOp({
-    nonce: assetNonce, assetId, metadata: metadataJSON, props: propsJSON,
-  });
-
-  // sign the operations string using the Eth universe owner account
-  const tx = new AtomicAssetOps({ universeId: universeIdx });
-  tx.push({ op: opsString });
-
-  const sigString = tx.sign({ web3Account: universeOwnerAccount });
-
-  // add more escape characters to embed the ops string into the query
-  // this is necessary for correct graphQL parsing
-  const gqlOpsString = tx.gqlOpsString();
-  return {
-    ops: gqlOpsString,
-    signature: sigString,
-  };
 }
 
 // Returns the two main strings (ops and signature)
@@ -212,14 +144,85 @@ function createAssetsForCollectionMutationInputs({
   };
 }
 
+// Returns the two main strings (ops and signature)
+// to be used as inputs to Create Asset GraphQL mutation
+// This function will be deprecated in future releases,
+// please use the AtomicAssetOps class instead.
+function updateAssetMutationInputs(
+  {
+    universeOwnerAccount, assetId, assetNonce, universeIdx, propsJSON, metadataJSON,
+  },
+) {
+  /** *
+    * This is the string that will be signed by the universe owner,
+    * and registered with the underlying blockchain
+    * `{
+    *   "type":"set_asset_props",
+    *   "msg":{
+    *       "nonce":<assetNonce>,
+    *       "id": "<assetId>",
+    *       "props":"<updatedAssetProperties>",
+    *       "metadata": "<assetMetadata>"
+    *   }
+    * }`
+    */
+  const opsString = updateAssetOp({
+    nonce: assetNonce, assetId, metadata: metadataJSON, props: propsJSON,
+  });
+
+  // sign the operations string using the Eth universe owner account
+  const tx = new AtomicAssetOps({ universeId: universeIdx });
+  tx.push({ op: opsString });
+
+  const sigString = tx.sign({ web3Account: universeOwnerAccount });
+
+  // add more escape characters to embed the ops string into the query
+  // this is necessary for correct graphQL parsing
+  const gqlOpsString = tx.gqlOpsString();
+  return {
+    ops: gqlOpsString,
+    signature: sigString,
+  };
+}
+
+// Returns the digest of a receipt
+// receipts have the following form:
+// receipt = {
+//     results: []string    an array with the unique Ids of the assets created
+//     ops: []string        an array with the operations applied
+//     universe: uint32     the universe Id where the ops are applied
+//     signature: string    the signature provided as input to the query
+//     verse: uint32        the verse at which ops will be synchronized with the Layer 1
+// }
+function receiptDigest({ receipt }) {
+  let resultsStr = '';
+  receipt.results.forEach((result) => { resultsStr += result; });
+  let opsStr = '';
+  receipt.ops.forEach((op) => { opsStr += op; });
+
+  const digest = concatHash(
+    ['string', 'string', 'uint32', 'string', 'uint32'],
+    [resultsStr, opsStr, receipt.universe, receipt.signature, receipt.verse],
+  );
+  return digest;
+}
+
+// Example of signing function
+// Any web3 compatible wallet/method can be used instead
+function sign({ digest, web3Account }) {
+  return web3Account.sign(digest).signature;
+}
+
 module.exports = {
-  signImageUpload,
-  signListImages,
-  signCreateCollection,
-  signUpdateCollection,
+  sign,
+  digestImageUpload,
+  digestListImages,
+  digestCreateCollection,
+  digestUpdateCollection,
+  digestDropPriority,
+  digestMutationOperations,
   receiptDigest,
   createAssetMutationInputs,
   createAssetsForCollectionMutationInputs,
   updateAssetMutationInputs,
-  signDropPriority,
 };
